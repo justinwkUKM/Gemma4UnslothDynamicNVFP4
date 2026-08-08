@@ -1,0 +1,13 @@
+{
+  "models": [
+    "gemma-4-E4B-it-NVFP4"
+  ],
+  "prompt_ids": [
+    "fact-001",
+    "fact-002",
+    "fact-003",
+    "fact-004",
+    "fact-005"
+  ],
+  "results_dir": "/workspace/gemma4-quality/results-smoke"
+}

@@ -1,0 +1,854 @@
+{
+  "abstention_refusal_correctness": null,
+  "aggregate_quality_score": 0.05,
+  "category_scores": {
+    "abstention_uncertainty": 0.0,
+    "arithmetic_reasoning": 0.0,
+    "closed_book_factual_qa": 0.16666666666666666,
+    "instruction_following": 0.0,
+    "multi_hop_factual": 0.0
+  },
+  "checkpoint": "unsloth/gemma-4-E4B-it-NVFP4",
+  "completed_prompt_count": 5,
+  "cost_per_evaluated_prompt_usd": 0.016649703479326365,
+  "details": [
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "canberra",
+      "prompt_id": "fact-001",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "ottawa",
+      "prompt_id": "fact-002",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "bras\u00edlia",
+      "prompt_id": "fact-003",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "tokyo",
+      "prompt_id": "fact-004",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "nairobi",
+      "prompt_id": "fact-005",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-006",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-007",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-008",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-009",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-010",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-011",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-012",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-013",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-014",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-015",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-016",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-017",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-018",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-019",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-020",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-021",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-022",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-023",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-024",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-025",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-026",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-027",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-028",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-029",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "fact-030",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-001",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-002",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-003",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-004",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-005",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-006",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-007",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-008",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-009",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-010",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-011",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-012",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-013",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-014",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-015",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-016",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-017",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-018",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-019",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "multi_hop_factual",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "multi-020",
+      "score": 0.0,
+      "scorer": "required_facts"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-001",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-002",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-003",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-004",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-005",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-006",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-007",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-008",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-009",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-010",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-011",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-012",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-013",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-014",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-015",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-016",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-017",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-018",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-019",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-020",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-021",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-022",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-023",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-024",
+      "score": 0.0,
+      "scorer": "normalized_exact"
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "arith-025",
+      "score": 0.0,
+      "scorer": "numeric"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-001",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-002",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-003",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-004",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-005",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-006",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-007",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-008",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-009",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-010",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-011",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-012",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-013",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-014",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "instruction_following",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "instr-015",
+      "score": 0.0,
+      "scorer": "instruction"
+    },
+    {
+      "category": "abstention_uncertainty",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "abstain-001",
+      "score": 0.0,
+      "scorer": "behavior"
+    },
+    {
+      "category": "abstention_uncertainty",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "abstain-002",
+      "score": 0.0,
+      "scorer": "behavior"
+    },
+    {
+      "category": "abstention_uncertainty",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "abstain-003",
+      "score": 0.0,
+      "scorer": "behavior"
+    },
+    {
+      "category": "abstention_uncertainty",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "abstain-004",
+      "score": 0.0,
+      "scorer": "behavior"
+    },
+    {
+      "category": "abstention_uncertainty",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "abstain-005",
+      "score": 0.0,
+      "scorer": "behavior"
+    },
+    {
+      "category": "abstention_uncertainty",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "abstain-006",
+      "score": 0.0,
+      "scorer": "behavior"
+    },
+    {
+      "category": "abstention_uncertainty",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "abstain-007",
+      "score": 0.0,
+      "scorer": "behavior"
+    },
+    {
+      "category": "abstention_uncertainty",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "abstain-008",
+      "score": 0.0,
+      "scorer": "behavior"
+    },
+    {
+      "category": "abstention_uncertainty",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "abstain-009",
+      "score": 0.0,
+      "scorer": "behavior"
+    },
+    {
+      "category": "abstention_uncertainty",
+      "error": true,
+      "failure_class": "missing_result",
+      "prompt_id": "abstain-010",
+      "score": 0.0,
+      "scorer": "behavior"
+    }
+  ],
+  "estimated_cost_usd": 0.08324851739663183,
+  "exact_match_accuracy": 1.0,
+  "factual_precision": null,
+  "factual_recall": null,
+  "failure_classifications": {
+    "missing_result": 95
+  },
+  "generated_at_utc": "2026-08-08T18:28:41.139361+00:00",
+  "generation_settings_hashes": [
+    "0dc735fcec2d39715161739da70c894fc6fb52d47cfbf63bd06060b9665d05e0"
+  ],
+  "instruction_correctness": null,
+  "model_id": "gemma-4-E4B-it-NVFP4",
+  "prompt_count": 100,
+  "raw_output": "raw.jsonl",
+  "response_length": {
+    "characters_mean": 6.8,
+    "characters_median": 7.0,
+    "characters_p95": 8.0,
+    "completion_tokens_mean": 2.6
+  },
+  "schema_version": 1,
+  "unanswered_or_error_rate": 0.95
+}

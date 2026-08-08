@@ -1,0 +1,53 @@
+{
+  "active_wall_seconds": 434.3400907650357,
+  "checkpoint": "unsloth/gemma-4-E4B-it-NVFP4",
+  "estimated_cost_usd": 0.08324851739663183,
+  "generation_settings": {
+    "max_tokens": 256,
+    "seed": 0,
+    "temperature": 0,
+    "top_k": -1,
+    "top_p": 1
+  },
+  "generation_settings_sha256": "0dc735fcec2d39715161739da70c894fc6fb52d47cfbf63bd06060b9665d05e0",
+  "hourly_rate_usd": 0.69,
+  "model_config_path": "/workspace/gemma4-benchmark/cache/huggingface/hub/models--unsloth--gemma-4-E4B-it-NVFP4/snapshots/1c363766fcfe575ac17a6d544963201a0d9b24c3/config.json",
+  "model_config_sha256": "16771892354b2f4b83b2bb8077ef25bc656aa6b11507a7ed55eb66b8a9d34435",
+  "model_id": "gemma-4-E4B-it-NVFP4",
+  "model_revision": "1c363766fcfe575ac17a6d544963201a0d9b24c3",
+  "prompt_ids": [
+    "fact-001",
+    "fact-002",
+    "fact-003",
+    "fact-004",
+    "fact-005"
+  ],
+  "schema_version": 1,
+  "server_command": [
+    "vllm",
+    "serve",
+    "unsloth/gemma-4-E4B-it-NVFP4",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "8000",
+    "--served-model-name",
+    "unsloth/gemma-4-E4B-it-NVFP4",
+    "--max-model-len",
+    "8192",
+    "--gpu-memory-utilization",
+    "0.90",
+    "--reasoning-parser",
+    "gemma4",
+    "--linear-backend",
+    "auto",
+    "--moe-backend",
+    "flashinfer_cutlass",
+    "--seed",
+    "0"
+  ],
+  "server_config_sha256": "dfe1152e5a8effa158781ad696f1f644284ed0c600c5015b51e4c72205dd409b",
+  "started_at_utc": "2026-08-08T18:16:45.510367+00:00",
+  "startup_seconds": 432.0984933960135,
+  "status": "complete"
+}

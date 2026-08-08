@@ -14,6 +14,10 @@ the following Hugging Face checkpoints:
 The runner must not make undocumented choices. Values below are fixed unless a
 run is explicitly marked as a deviation in its result manifest.
 
+This specification covers the synthetic performance campaign. The independent
+quality campaign is defined in section 12 and under `quality/`; its scores must
+never be presented as latency, throughput, or a component of those metrics.
+
 ## 1. Provisioning and budget
 
 Create one Community Cloud Pod with one RTX 5090, CUDA 12.9 or newer, a 40 GB
@@ -298,6 +302,61 @@ or audited without credentials.
 The operator confirms the remote identity before setup by comparing the supplied
 RunPod Pod ID/host and the remote `hostname`, `nvidia-smi -L`, and (when exposed)
 `RUNPOD_POD_ID`. A mismatch aborts before installation or downloads.
+
+## 12. Separate quality and factuality campaign
+
+The quality campaign is a second experiment, not another performance workload.
+It uses `quality/dataset_v1.jsonl`, whose exact bytes, version, 100-prompt count,
+category quotas, and source snapshot dates are committed in
+`quality/dataset_manifest.json`. The prompt catalog in `quality/prompts.md` is a
+human-readable view; JSONL remains authoritative.
+
+All three checkpoints receive the same ordered prompt IDs with temperature 0,
+top-p 1, top-k -1, seed 0, and a 256-token output cap. Models load serially
+through the same vLLM server configuration from section 5. The runner writes a
+complete raw record after each response, retains all attempts, skips successful
+prompt IDs when resumed, and retries only failed requests. Records include
+prompt and output text, request timing and token usage, errors, model/checkpoint
+identity, hashes of the dataset, generation settings, server command, runner,
+and cached model configuration, plus a reference to allow-listed environment
+metadata. Tokens and complete environment dumps are prohibited.
+
+The v1 evaluator uses no model judge. It applies normalized exact/numeric match,
+required-fact precision/recall, structured instruction checks, and explicit
+abstention/refusal checks. It reports per-category and aggregate scores, exact
+match, reference-bound factual precision and recall, abstention correctness,
+response lengths, failure classes, and cost per evaluated prompt. Reference-
+bound precision detects curated contradictions; it is not a general
+hallucination detector. Raw JSONL remains the audit authority for every score.
+
+The default quality runner budget is the lesser of two hours or USD 1.50 at the
+recorded GPU hourly rate. This budget is separate from the five-hour/USD 4.00
+performance campaign. As with the performance campaign, ending the runner does
+not stop Pod billing; collection must be verified and the Pod stopped through
+an authorized operator path.
+
+Run a small `--limit` smoke sample first. A final report is emitted only after
+all three result directories contain the exact 100 prompt IDs. `--allow-partial`
+is permitted only when the campaign is explicitly labeled partial. Local
+acceptance requires dataset/schema/hash validation, evaluator unit tests,
+identical generation-setting hashes, complete UTF-8 JSONL, a secret scan, and
+preserved error records. Quality results and performance results remain in their
+respective artifact trees.
+
+The first complete quality campaign finished on 2026-08-08 UTC on Pod
+`321hxgl8vi7a5q` (RTX 5090, USD 0.69/hour). Each model produced 100/100 raw
+records with zero request errors or unanswered responses. The recorded
+aggregate scores were E4B 85.5%, 12B 88.3%, and 26B A4B 88.3%; exact-match
+accuracy was 90.9%, 94.5%, and 98.2%, respectively. Full category scores,
+source hash, model revisions, startup times, costs, and raw-output links are in
+`quality/summary/quality-report.md`. These measurements are a quality result,
+not a performance ranking.
+
+The 26B A4B startup additionally performed a first-run FlashInfer CUTLASS MoE
+JIT build; its `nvcc`/`cicc` evidence remains in the captured server log. A
+separate follow-up design for routing telemetry and active-parameter efficiency
+is recorded in `quality/MOE_EVALUATION_PLAN.md` and was not mixed into this
+campaign.
 
 ## 11. Execution record for the current campaign
 

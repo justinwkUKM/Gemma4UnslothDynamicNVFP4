@@ -3,6 +3,11 @@
 This repository contains the reproducible benchmark specification and captured
 results for Unsloth Gemma 4 NVFP4 text-generation checkpoints on RunPod.
 
+It now has two deliberately separate tracks: the existing synthetic performance
+campaign measures serving speed, while [`quality/`](quality/) measures factual
+and instruction quality with 100 fixed prompts. A quality score is not a
+throughput score and the two must not be combined into a single metric.
+
 Copy [`.env.example`](.env.example) to `.env` for local CLI workflows. The
 example contains placeholders only; `.env` is ignored and must never be
 committed. SSH private keys and model/Hugging Face tokens follow the same rule.
@@ -60,6 +65,18 @@ throughput: E4B, 26B A4B, then 12B. The first repetition can have higher TTFT
 because of one-time compilation and startup effects, which is why the report
 uses medians.
 
+The quality campaign has its own report at
+[`quality/summary/quality-report.md`](quality/summary/quality-report.md). It uses
+the exact prompts listed in [`quality/prompts.md`](quality/prompts.md), fixed
+decoding, reference snapshots, and deterministic scoring. Source snapshot dates
+matter for any fact that can change over time.
+
+The completed 2026-08-08 UTC run evaluated all 100 prompts on each model with
+zero request errors. Aggregate quality was 85.5% for E4B, 88.3% for 12B, and
+88.3% for 26B A4B. Exact-match accuracy was 90.9%, 94.5%, and 98.2%
+respectively. These values are quality-only results and are not throughput or
+latency rankings.
+
 ## Repository contents
 
 - [`RUNPOD_GEMMA_BENCHMARK_SPEC.md`](RUNPOD_GEMMA_BENCHMARK_SPEC.md): complete
@@ -73,6 +90,11 @@ uses medians.
   vLLM, FlashInfer, and CUTLASS environment setup.
 - [`scripts/collect_results.sh`](scripts/collect_results.sh): copies config,
   environment, logs, results, and summaries without stopping the Pod.
+- [`quality/`](quality/): versioned quality dataset, manifest, resumable runner,
+  evaluator, tests, audit outputs, and a separate quality report.
+- [`scripts/collect_quality_results.sh`](scripts/collect_quality_results.sh):
+  collects the independent quality artifacts without mixing them into a
+  timestamped performance campaign.
 
 The helper scripts deliberately do not create or terminate Pods. For example:
 
