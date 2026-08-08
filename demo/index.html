@@ -29,6 +29,11 @@
 
       .app { width: min(820px, 100%); margin: 0 auto; padding: 26px 20px; }
       header { margin-bottom: 8px; text-align: center; }
+      .site-header {
+        position: sticky; top: 0; z-index: 20; padding: 16px 0 12px;
+        background: rgba(251, 250, 248, .94); backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(229, 226, 220, .85);
+      }
       h1 { margin: 0 0 4px; font-size: clamp(1.25rem, 3vw, 1.55rem); font-weight: 650; letter-spacing: -.02em; }
       .subtitle { color: var(--muted); margin: 0; }
       .meta {
@@ -99,7 +104,7 @@
   </head>
   <body>
     <main class="app">
-      <header>
+      <header class="site-header">
         <h1>Gemma 4 26B inference</h1>
         <p class="subtitle">Streaming response demo through the local SSH tunnel.</p>
         <div class="meta">
