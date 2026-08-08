@@ -108,6 +108,9 @@
       button:disabled { opacity: .5; cursor: wait; }
       .empty { color: var(--muted); text-align: center; margin: auto; }
       .error { color: #ff9b9b; }
+      .site-footer { padding: 0 0 28px; text-align: center; color: var(--muted); font-size: .78rem; }
+      .site-footer a { color: #83b2ff; text-decoration: none; }
+      .site-footer a:hover { text-decoration: underline; }
     </style>
   </head>
   <body>
@@ -132,6 +135,9 @@
       <section id="chat" aria-live="polite">
         <div class="empty" id="empty">Ask a question to see the model stream its answer.</div>
       </section>
+      <footer class="site-footer">
+        Gemma 4 local inference demo · <a href="https://github.com/justinwkUKM/Gemma4UnslothDynamicNVFP4" target="_blank" rel="noreferrer">View the project on GitHub</a>
+      </footer>
     </main>
 
     <form class="composer" id="composer">
