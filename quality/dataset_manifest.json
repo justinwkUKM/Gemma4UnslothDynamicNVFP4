@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "dataset_version": "gemma-quality-v1.0.0",
+  "dataset_file": "dataset_v1.jsonl",
+  "prompt_count": 100,
+  "category_counts": {
+    "closed_book_factual_qa": 30,
+    "multi_hop_factual": 20,
+    "arithmetic_reasoning": 25,
+    "instruction_following": 15,
+    "abstention_uncertainty": 10
+  },
+  "source_snapshot_dates": [
+    "2026-08-09"
+  ],
+  "dataset_sha256": "1da22586dbe86d5b9d04ff25a3fc6706cbb08e1eac6ba3412b7060e24662a469",
+  "hash_contract": "SHA-256 of the exact UTF-8 bytes of dataset_v1.jsonl",
+  "curation_notes": "Static, repository-versioned references. A source snapshot date records when the answer was curated, not a guarantee that the linked page will never change.",
+  "default_generation_settings": {
+    "temperature": 0,
+    "top_p": 1,
+    "top_k": -1,
+    "seed": 0,
+    "max_tokens": 256
+  }
+}

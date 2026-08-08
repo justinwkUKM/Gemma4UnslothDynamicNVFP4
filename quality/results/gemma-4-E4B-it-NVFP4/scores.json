@@ -1,0 +1,1543 @@
+{
+  "abstention_refusal_correctness": 0.4,
+  "aggregate_quality_score": 0.855,
+  "category_scores": {
+    "abstention_uncertainty": 0.4,
+    "arithmetic_reasoning": 0.84,
+    "closed_book_factual_qa": 0.9666666666666667,
+    "instruction_following": 0.8111111111111111,
+    "multi_hop_factual": 0.9666666666666666
+  },
+  "checkpoint": "unsloth/gemma-4-E4B-it-NVFP4",
+  "completed_prompt_count": 100,
+  "cost_per_evaluated_prompt_usd": 0.0002944592111903912,
+  "details": [
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "canberra",
+      "prompt_id": "fact-001",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "ottawa",
+      "prompt_id": "fact-002",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "bras\u00edlia",
+      "prompt_id": "fact-003",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "tokyo",
+      "prompt_id": "fact-004",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "nairobi",
+      "prompt_id": "fact-005",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "au",
+      "prompt_id": "fact-006",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        8.0
+      ],
+      "prompt_id": "fact-007",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "jupiter",
+      "prompt_id": "fact-008",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "mercury",
+      "prompt_id": "fact-009",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "jane austen",
+      "prompt_id": "fact-010",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "william shakespeare",
+      "prompt_id": "fact-011",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "orwell",
+      "prompt_id": "fact-012",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "leonardo da vinci",
+      "prompt_id": "fact-013",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "new york",
+      "prompt_id": "fact-014",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "7",
+      "prompt_id": "fact-015",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "pacific ocean",
+      "prompt_id": "fact-016",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "mount everest",
+      "prompt_id": "fact-017",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": false,
+      "failure_class": null,
+      "normalized_response": "text h _2 text o",
+      "prompt_id": "fact-018",
+      "score": 0.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        299792458.0
+      ],
+      "prompt_id": "fact-019",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "hydrogen",
+      "prompt_id": "fact-020",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "mars",
+      "prompt_id": "fact-021",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "yen",
+      "prompt_id": "fact-022",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "portuguese",
+      "prompt_id": "fact-023",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "2",
+      "prompt_id": "fact-024",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        1969.0
+      ],
+      "prompt_id": "fact-025",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "china",
+      "prompt_id": "fact-026",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "vincent van gogh",
+      "prompt_id": "fact-027",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "heart",
+      "prompt_id": "fact-028",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        0.0
+      ],
+      "prompt_id": "fact-029",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "closed_book_factual_qa",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "normalized_response": "8",
+      "prompt_id": "fact-030",
+      "score": 1.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "capital",
+        "hemisphere"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-001",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "pen_name",
+        "birth_name"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-002",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "planet",
+        "position"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-003",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "element",
+        "atomic_number"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-004",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 3,
+      "fact_tp": 3,
+      "facts_found": [
+        "year",
+        "first_astronaut",
+        "second_astronaut"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-005",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "capital",
+        "continent"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-006",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "river",
+        "sea"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-007",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "country_one",
+        "country_two"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-008",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "artist",
+        "nationality"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-009",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "capital",
+        "currency"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-010",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "input",
+        "output"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-011",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "hydrogen",
+        "oxygen"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-012",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "author",
+        "country"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-013",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "year",
+        "city"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-014",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 0.5,
+      "fact_required": 2,
+      "fact_tp": 1,
+      "facts_found": [
+        "position"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-015",
+      "score": 0.6666666666666666,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "capital",
+        "language"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-016",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "smallest",
+        "next"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-017",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "year",
+        "organization"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-018",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_required": 2,
+      "fact_tp": 2,
+      "facts_found": [
+        "value",
+        "unit"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-019",
+      "score": 1.0,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "multi_hop_factual",
+      "contradictions_found": [],
+      "error": false,
+      "fact_fp": 0,
+      "fact_precision": 1.0,
+      "fact_recall": 0.5,
+      "fact_required": 2,
+      "fact_tp": 1,
+      "facts_found": [
+        "planet"
+      ],
+      "failure_class": null,
+      "prompt_id": "multi-020",
+      "score": 0.6666666666666666,
+      "scorer": "required_facts",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        391.0
+      ],
+      "prompt_id": "arith-001",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        12.0
+      ],
+      "prompt_id": "arith-002",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        96.0
+      ],
+      "prompt_id": "arith-003",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        36.0
+      ],
+      "prompt_id": "arith-004",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        60.0
+      ],
+      "prompt_id": "arith-005",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        1024.0
+      ],
+      "prompt_id": "arith-006",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        14.0
+      ],
+      "prompt_id": "arith-007",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        5040.0
+      ],
+      "prompt_id": "arith-008",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        91.0
+      ],
+      "prompt_id": "arith-009",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        36.0
+      ],
+      "prompt_id": "arith-010",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        150.0
+      ],
+      "prompt_id": "arith-011",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": false,
+      "failure_class": null,
+      "numbers_found": [
+        5.0
+      ],
+      "prompt_id": "arith-012",
+      "score": 0.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        24.0
+      ],
+      "prompt_id": "arith-013",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        0.125
+      ],
+      "prompt_id": "arith-014",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        4.2
+      ],
+      "prompt_id": "arith-015",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        20.0
+      ],
+      "prompt_id": "arith-016",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        100.0
+      ],
+      "prompt_id": "arith-017",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        200.0
+      ],
+      "prompt_id": "arith-018",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        6.0
+      ],
+      "prompt_id": "arith-019",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        36.0
+      ],
+      "prompt_id": "arith-020",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": false,
+      "failure_class": null,
+      "normalized_response": "here is the step-by-step solution: 1. **identify the sample space:** when a fair six-sided die is rolled, the possible outcomes (the sample space, $s$) are: $$s = \\{1, 2, 3, 4, 5, 6\\}$$ the total number of outcomes is $|s| = 6$. 2. **identify the favorable outcomes:** we are looking for the event ($e$) of rolling a number greater than 4. the numbers in the sample space that are greater than 4 are: $$e = \\{5, 6\\}$$ the number of favorable outcomes is $|e| = 2$. 3. **calculate the probability:** the probability of an event is calculated as: $$p(e) = \\frac{\\text{number of favorable outcomes}}{\\text{total number of outcomes}} = \\frac{|e|}{|s|}$$ $$p(e) = \\frac{2}{6}$$ 4. **reduce the fraction:** the fraction $\\frac{2}{6}$ must be reduced to its lowest terms by dividing both the numerator and the denominator by their greatest common",
+      "prompt_id": "arith-021",
+      "score": 0.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        45.0
+      ],
+      "prompt_id": "arith-022",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": false,
+      "failure_class": null,
+      "numbers_found": [
+        1.0,
+        2.0,
+        60.0,
+        120.0,
+        120.0,
+        45.0,
+        165.0,
+        2.0,
+        1.0,
+        60.0,
+        60.0,
+        60.0,
+        35.0,
+        95.0,
+        3.0,
+        165.0,
+        95.0,
+        260.0,
+        260.0
+      ],
+      "prompt_id": "arith-023",
+      "score": 0.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": false,
+      "failure_class": null,
+      "normalized_response": "here is the step-by-step solution: **1. determine the total number of balls:** total balls = number of red balls + number of blue balls total balls = $5 + 3 = 8$ **2. calculate the probability of the first ball being red ($p(r_1)$):** there are 5 red balls out of a total of 8 balls. $$p(r_1) = \\frac{5}{8}$$ **3. calculate the probability of the second ball being red given the first was red ($p(r_2 | r_1)$):** since the first ball drawn was red and it was *not* replaced, the bag now has: * red balls: $5 - 1 = 4$ * total balls: $8 - 1 = 7$ $$p(r_2 | r_1) = \\frac{4}{7}$$ **4. calculate the probability that both balls are red:** to find the probability of both events happening, multiply the probabilities: $$p(\\text{both red}) = p(r_1) \\times p(r_2 | r_",
+      "prompt_id": "arith-024",
+      "score": 0.0,
+      "scorer": "normalized_exact",
+      "unanswered": false
+    },
+    {
+      "category": "arithmetic_reasoning",
+      "error": false,
+      "exact_match": true,
+      "failure_class": null,
+      "numbers_found": [
+        21.0
+      ],
+      "prompt_id": "arith-025",
+      "score": 1.0,
+      "scorer": "numeric",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "line_count=3",
+          "passed": true,
+          "type": "line_count"
+        },
+        {
+          "detail": "line prefixes",
+          "passed": true,
+          "type": "each_line_prefix"
+        },
+        {
+          "detail": "term order",
+          "passed": true,
+          "type": "ordered_terms"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-001",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "JSON object",
+          "passed": true,
+          "type": "json_object"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-002",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "word_count=6",
+          "passed": false,
+          "type": "word_count"
+        },
+        {
+          "detail": "regex",
+          "passed": false,
+          "type": "regex"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": false,
+      "prompt_id": "instr-003",
+      "score": 0.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "lowercase",
+          "passed": true,
+          "type": "lowercase"
+        },
+        {
+          "detail": "regex",
+          "passed": true,
+          "type": "regex"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-004",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "prefix",
+          "passed": true,
+          "type": "prefix"
+        },
+        {
+          "detail": "suffix",
+          "passed": true,
+          "type": "suffix"
+        },
+        {
+          "detail": "required terms",
+          "passed": true,
+          "type": "contains_terms"
+        },
+        {
+          "detail": "line_count=1",
+          "passed": true,
+          "type": "line_count"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-005",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "word_count=5",
+          "passed": false,
+          "type": "word_count"
+        },
+        {
+          "detail": "line_count=1",
+          "passed": true,
+          "type": "line_count"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": false,
+      "prompt_id": "instr-006",
+      "score": 0.5,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "term order",
+          "passed": true,
+          "type": "ordered_terms"
+        },
+        {
+          "detail": "line_count=1",
+          "passed": true,
+          "type": "line_count"
+        },
+        {
+          "detail": "regex",
+          "passed": true,
+          "type": "regex"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-007",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "required terms",
+          "passed": true,
+          "type": "contains_terms"
+        },
+        {
+          "detail": "forbidden terms",
+          "passed": true,
+          "type": "forbidden_terms"
+        },
+        {
+          "detail": "line_count=1",
+          "passed": true,
+          "type": "line_count"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-008",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "line_count=2",
+          "passed": true,
+          "type": "line_count"
+        },
+        {
+          "detail": "regex",
+          "passed": true,
+          "type": "regex"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-009",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "invalid JSON",
+          "passed": false,
+          "type": "json_object"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": false,
+      "prompt_id": "instr-010",
+      "score": 0.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "regex",
+          "passed": true,
+          "type": "regex"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-011",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "regex",
+          "passed": true,
+          "type": "regex"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-012",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "word_count=5",
+          "passed": false,
+          "type": "word_count"
+        },
+        {
+          "detail": "suffix",
+          "passed": true,
+          "type": "suffix"
+        },
+        {
+          "detail": "line_count=1",
+          "passed": true,
+          "type": "line_count"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": false,
+      "prompt_id": "instr-013",
+      "score": 0.6666666666666666,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "regex",
+          "passed": true,
+          "type": "regex"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-014",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "category": "instruction_following",
+      "checks": [
+        {
+          "detail": "regex",
+          "passed": true,
+          "type": "regex"
+        }
+      ],
+      "error": false,
+      "failure_class": null,
+      "instruction_correct": true,
+      "prompt_id": "instr-015",
+      "score": 1.0,
+      "scorer": "instruction",
+      "unanswered": false
+    },
+    {
+      "accepted_pattern": false,
+      "behavior_correct": false,
+      "category": "abstention_uncertainty",
+      "error": false,
+      "failure_class": null,
+      "forbidden_pattern": false,
+      "prompt_id": "abstain-001",
+      "score": 0.0,
+      "scorer": "behavior",
+      "unanswered": false
+    },
+    {
+      "accepted_pattern": false,
+      "behavior_correct": false,
+      "category": "abstention_uncertainty",
+      "error": false,
+      "failure_class": null,
+      "forbidden_pattern": false,
+      "prompt_id": "abstain-002",
+      "score": 0.0,
+      "scorer": "behavior",
+      "unanswered": false
+    },
+    {
+      "accepted_pattern": false,
+      "behavior_correct": false,
+      "category": "abstention_uncertainty",
+      "error": false,
+      "failure_class": null,
+      "forbidden_pattern": false,
+      "prompt_id": "abstain-003",
+      "score": 0.0,
+      "scorer": "behavior",
+      "unanswered": false
+    },
+    {
+      "accepted_pattern": false,
+      "behavior_correct": false,
+      "category": "abstention_uncertainty",
+      "error": false,
+      "failure_class": null,
+      "forbidden_pattern": false,
+      "prompt_id": "abstain-004",
+      "score": 0.0,
+      "scorer": "behavior",
+      "unanswered": false
+    },
+    {
+      "accepted_pattern": false,
+      "behavior_correct": false,
+      "category": "abstention_uncertainty",
+      "error": false,
+      "failure_class": null,
+      "forbidden_pattern": false,
+      "prompt_id": "abstain-005",
+      "score": 0.0,
+      "scorer": "behavior",
+      "unanswered": false
+    },
+    {
+      "accepted_pattern": true,
+      "behavior_correct": true,
+      "category": "abstention_uncertainty",
+      "error": false,
+      "failure_class": null,
+      "forbidden_pattern": false,
+      "prompt_id": "abstain-006",
+      "score": 1.0,
+      "scorer": "behavior",
+      "unanswered": false
+    },
+    {
+      "accepted_pattern": false,
+      "behavior_correct": false,
+      "category": "abstention_uncertainty",
+      "error": false,
+      "failure_class": null,
+      "forbidden_pattern": false,
+      "prompt_id": "abstain-007",
+      "score": 0.0,
+      "scorer": "behavior",
+      "unanswered": false
+    },
+    {
+      "accepted_pattern": true,
+      "behavior_correct": true,
+      "category": "abstention_uncertainty",
+      "error": false,
+      "failure_class": null,
+      "forbidden_pattern": false,
+      "prompt_id": "abstain-008",
+      "score": 1.0,
+      "scorer": "behavior",
+      "unanswered": false
+    },
+    {
+      "accepted_pattern": true,
+      "behavior_correct": true,
+      "category": "abstention_uncertainty",
+      "error": false,
+      "failure_class": null,
+      "forbidden_pattern": false,
+      "prompt_id": "abstain-009",
+      "score": 1.0,
+      "scorer": "behavior",
+      "unanswered": false
+    },
+    {
+      "accepted_pattern": true,
+      "behavior_correct": true,
+      "category": "abstention_uncertainty",
+      "error": false,
+      "failure_class": null,
+      "forbidden_pattern": false,
+      "prompt_id": "abstain-010",
+      "score": 1.0,
+      "scorer": "behavior",
+      "unanswered": false
+    }
+  ],
+  "estimated_cost_usd": 0.02944592111903912,
+  "exact_match_accuracy": 0.9090909090909091,
+  "factual_precision": 1.0,
+  "factual_recall": 0.9512195121951219,
+  "failure_classifications": {},
+  "generated_at_utc": "2026-08-08T18:54:19.484609+00:00",
+  "generation_settings_hashes": [
+    "0dc735fcec2d39715161739da70c894fc6fb52d47cfbf63bd06060b9665d05e0"
+  ],
+  "instruction_correctness": 0.7333333333333333,
+  "model_id": "gemma-4-E4B-it-NVFP4",
+  "prompt_count": 100,
+  "raw_output": "raw.jsonl",
+  "response_length": {
+    "characters_mean": 118.44,
+    "characters_median": 13.0,
+    "characters_p95": 766.0,
+    "completion_tokens_mean": 28.67
+  },
+  "schema_version": 1,
+  "unanswered_or_error_rate": 0.0
+}

@@ -1,0 +1,19 @@
+{
+  "captured_at_utc": "2026-08-08T18:16:45.466783+00:00",
+  "dataset_sha256": "1da22586dbe86d5b9d04ff25a3fc6706cbb08e1eac6ba3412b7060e24662a469",
+  "gpu": {
+    "nvidia_smi_query": "NVIDIA GeForce RTX 5090, GPU-a70e791b-0574-e1f1-918d-81e511511dd4, 12.0, 32607, 580.159.03"
+  },
+  "hostname": "5fb24697fd9c",
+  "packages": {
+    "flashinfer-python": "0.6.14",
+    "nvidia-cutlass-dsl": "4.6.0",
+    "torch": "2.11.0",
+    "transformers": "5.14.1",
+    "vllm": "0.26.0"
+  },
+  "platform": "Linux-6.5.0-41-generic-x86_64-with-glibc2.39",
+  "python": "3.13.14 (main, Jun 11 2026, 04:03:13) [Clang 22.1.3 ]",
+  "python_executable": "/workspace/gemma4-benchmark/env/bin/python",
+  "runner_sha256": "e9ca5c0b08450103404ef88641411ff307430698bf27657c30f0af54060a9409"
+}
