@@ -77,6 +77,18 @@ zero request errors. Aggregate quality was 85.5% for E4B, 88.3% for 12B, and
 respectively. These values are quality-only results and are not throughput or
 latency rankings.
 
+| Model | Aggregate quality | Exact match | Factual precision / recall | Cost per prompt |
+| --- | ---: | ---: | ---: | ---: |
+| Gemma 4 E4B | 85.5% | 90.9% | 100.0% / 95.1% | $0.000294 |
+| Gemma 4 12B | 88.3% | 94.5% | 100.0% / 95.1% | $0.000393 |
+| Gemma 4 26B A4B | 88.3% | 98.2% | 100.0% / 90.2% | $0.001354 |
+
+For the planned controlled study of mixture-of-experts routing, active versus
+total parameters, dispatch overhead, and quality/cost trade-offs, see the
+[`MoE evaluation plan`](quality/MOE_EVALUATION_PLAN.md). It is intentionally
+separate from both the synthetic performance campaign and this reference-based
+quality score.
+
 ## Repository contents
 
 - [`RUNPOD_GEMMA_BENCHMARK_SPEC.md`](RUNPOD_GEMMA_BENCHMARK_SPEC.md): complete
@@ -92,6 +104,8 @@ latency rankings.
   environment, logs, results, and summaries without stopping the Pod.
 - [`quality/`](quality/): versioned quality dataset, manifest, resumable runner,
   evaluator, tests, audit outputs, and a separate quality report.
+- [`quality/MOE_EVALUATION_PLAN.md`](quality/MOE_EVALUATION_PLAN.md): planned
+  controlled MoE impact measurements and acceptance criteria.
 - [`scripts/collect_quality_results.sh`](scripts/collect_quality_results.sh):
   collects the independent quality artifacts without mixing them into a
   timestamped performance campaign.
