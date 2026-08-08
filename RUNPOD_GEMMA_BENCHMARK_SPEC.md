@@ -358,6 +358,13 @@ separate follow-up design for routing telemetry and active-parameter efficiency
 is recorded in `quality/MOE_EVALUATION_PLAN.md` and was not mixed into this
 campaign.
 
+The next planned model coverage includes the [Unsloth Qwen3.6-27B-NVFP4
+checkpoint](https://huggingface.co/unsloth/Qwen3.6-27B-NVFP4) and [Unsloth
+Qwen3.6-35B-A3B-NVFP4](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4).
+Run each as a separately budgeted campaign using the existing performance
+workloads and the same 100-prompt quality suite; publish independent reports
+and do not combine quality scores with throughput rankings.
+
 ## 11. Execution record for the current campaign
 
 This section is an append-only operational record for the campaign started on

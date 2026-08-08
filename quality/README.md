@@ -106,3 +106,12 @@ the per-model server log are linked from the report.
 The separate MoE routing/efficiency follow-up is scoped in
 [`MOE_EVALUATION_PLAN.md`](MOE_EVALUATION_PLAN.md); it is intentionally not a
 quality score or part of this campaign.
+
+## Future model coverage
+
+The next planned cross-model run will evaluate the [Unsloth Qwen3.6-27B-NVFP4
+checkpoint](https://huggingface.co/unsloth/Qwen3.6-27B-NVFP4) and [Unsloth
+Qwen3.6-35B-A3B-NVFP4](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4)
+with both the repository's performance workload and this same 100-prompt
+quality suite. They will be separately recorded campaigns with independent
+performance and quality reports.

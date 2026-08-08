@@ -89,6 +89,16 @@ total parameters, dispatch overhead, and quality/cost trade-offs, see the
 separate from both the synthetic performance campaign and this reference-based
 quality score.
 
+## Future evaluation plans
+
+The next planned model evaluations are the [Unsloth Qwen3.6-27B-NVFP4
+checkpoint](https://huggingface.co/unsloth/Qwen3.6-27B-NVFP4) and [Unsloth
+Qwen3.6-35B-A3B-NVFP4](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4).
+We intend to run both the existing performance benchmark and the 100-prompt
+quality campaign under the same controlled settings, with separate reports so
+Qwen results can be compared against Gemma without mixing throughput and
+quality metrics.
+
 ## Repository contents
 
 - [`RUNPOD_GEMMA_BENCHMARK_SPEC.md`](RUNPOD_GEMMA_BENCHMARK_SPEC.md): complete
