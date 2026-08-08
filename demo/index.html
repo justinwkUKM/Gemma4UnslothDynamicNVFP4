@@ -37,7 +37,12 @@
         background: rgba(255, 255, 255, .7); color: var(--muted); font-size: .76rem;
       }
       .meta strong { color: var(--text); font-weight: 600; }
-      .meta code { color: #b9c9ff; word-break: break-all; }
+      .meta code { color: #706a62; word-break: break-all; }
+      .clear-button {
+        width: auto; height: auto; padding: 2px 7px; border: 0; border-radius: 6px;
+        background: transparent; color: var(--muted); font-size: .76rem;
+      }
+      .clear-button:hover { background: var(--panel-soft); color: var(--text); }
 
       #chat {
         min-height: 430px; display: flex; flex-direction: column; gap: 24px;
@@ -52,6 +57,18 @@
       .assistant .bubble { padding-left: 2px; }
       .user .bubble { background: var(--user); padding: 10px 14px; }
       .label { color: var(--muted); font-size: .72rem; margin: 0 0 5px 0; font-weight: 600; }
+      .bubble p { margin: 0 0 11px; }
+      .bubble p:last-child { margin-bottom: 0; }
+      .bubble h1, .bubble h2, .bubble h3 { margin: 0 0 9px; line-height: 1.3; }
+      .bubble h1 { font-size: 1.3rem; }
+      .bubble h2 { font-size: 1.15rem; }
+      .bubble h3 { font-size: 1.03rem; }
+      .bubble ul, .bubble ol { margin: 4px 0 11px 22px; padding: 0; }
+      .bubble li { margin: 3px 0; }
+      .bubble code { padding: 2px 5px; border-radius: 5px; background: var(--panel-soft); font: .9em ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .bubble pre { overflow-x: auto; margin: 8px 0 11px; padding: 12px; border: 1px solid var(--border); border-radius: 9px; background: #f5f3ef; }
+      .bubble pre code { padding: 0; background: transparent; }
+      .bubble a { color: #496bba; }
 
       .composer {
         position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
@@ -83,6 +100,7 @@
         <div class="meta">
           <span>Model: <strong id="model-name">gemma-4-26B-A4B-it-NVFP4</strong></span>
           <span>URL: <code id="endpoint">http://127.0.0.1:8000/v1/chat/completions</code></span>
+          <button class="clear-button" id="clear" type="button">Clear chat</button>
         </div>
       </header>
 
@@ -107,10 +125,40 @@
       const promptBox = document.getElementById("prompt");
       const send = document.getElementById("send");
       const composer = document.getElementById("composer");
-      const empty = document.getElementById("empty");
+      const clear = document.getElementById("clear");
+      let activeController = null;
+
+      function escapeHtml(value) {
+        return value.replace(/[&<>"']/g, (character) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+        }[character]));
+      }
+
+      // Small, dependency-free Markdown renderer for model output.
+      function renderMarkdown(source) {
+        let html = escapeHtml(source);
+        html = html.replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>");
+        html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+        html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+        html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+        html = html.replace(/^[-*] (.+)$/gm, "<li>$1</li>");
+        html = html.replace(/(<li>.*<\/li>)/gs, "<ul>$1</ul>");
+        html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        html = html.replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+        html = html.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+        html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
+        return html.split(/\n{2,}/).map((block) => {
+          if (/^<(h[1-3]|pre|ul)>/.test(block)) return block;
+          return `<p>${block.replace(/\n/g, "<br>")}</p>`;
+        }).join("");
+      }
+
+      function scrollToLatest() {
+        requestAnimationFrame(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      }
 
       function addMessage(role, text = "") {
-        empty?.remove();
+        document.getElementById("empty")?.remove();
         const wrapper = document.createElement("article");
         wrapper.className = `message ${role}`;
         const content = document.createElement("div");
@@ -119,15 +167,18 @@
         label.textContent = role === "user" ? "You" : "Gemma 4 26B";
         const bubble = document.createElement("div");
         bubble.className = "bubble";
-        bubble.textContent = text;
+        bubble.dataset.raw = text;
+        if (role === "assistant") bubble.innerHTML = renderMarkdown(text);
+        else bubble.textContent = text;
         content.append(label, bubble);
         wrapper.append(content);
         chat.append(wrapper);
-        chat.scrollTop = chat.scrollHeight;
+        scrollToLatest();
         return bubble;
       }
 
       async function streamAnswer(prompt, bubble) {
+        activeController = new AbortController();
         const response = await fetch(ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -138,6 +189,7 @@
             temperature: 0.7,
             stream: true,
           }),
+          signal: activeController.signal,
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         if (!response.body) throw new Error("The browser did not receive a streaming response.");
@@ -158,13 +210,15 @@
             try {
               const content = JSON.parse(data).choices?.[0]?.delta?.content;
               if (content) {
-                bubble.textContent += content;
-                chat.scrollTop = chat.scrollHeight;
+                bubble.dataset.raw += content;
+                bubble.innerHTML = renderMarkdown(bubble.dataset.raw);
+                scrollToLatest();
               }
             } catch (_) { /* Ignore incomplete/non-content SSE frames. */ }
           }
           if (done) break;
         }
+        activeController = null;
       }
 
       composer.addEventListener("submit", async (event) => {
@@ -181,9 +235,20 @@
           bubble.className += " error";
           bubble.textContent = `Unable to reach the model: ${error.message}`;
         } finally {
+          activeController = null;
           send.disabled = false;
           promptBox.focus();
         }
+      });
+
+      clear.addEventListener("click", () => {
+        activeController?.abort();
+        activeController = null;
+        chat.innerHTML = '<div class="empty" id="empty">Ask a question to see the model stream its answer.</div>';
+        promptBox.value = "";
+        send.disabled = false;
+        promptBox.focus();
+        window.scrollTo(0, 0);
       });
 
       promptBox.addEventListener("keydown", (event) => {
