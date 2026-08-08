@@ -25,7 +25,7 @@ def parse_args() -> argparse.Namespace:
         default="gemma-4-26B-A4B-it-NVFP4",
         help="Served model name",
     )
-    parser.add_argument("--max-tokens", type=int, default=10000)
+    parser.add_argument("--max-tokens", type=int, default=8192)
     parser.add_argument("--temperature", type=float, default=0.7)
     return parser.parse_args()
 
