@@ -356,12 +356,21 @@ failure. No Marlin, emulation, CPU offload, or OOM path has been used.
 
 ### Current state
 
-The first checkpoint, `unsloth/gemma-4-E4B-it-NVFP4`, has downloaded 7.55 GiB of
-weights, loaded approximately 7.97 GiB on the GPU, completed vLLM compilation
-and CUDA graph capture, and is proceeding to health-check and identical warm-up
-workloads. The remote runner is still active; measured JSON and the generated
-Markdown report will be collected only after it finishes or the budget guard
-stops it.
+E4B and 12B completed their five warm-ups plus three interactive and three
+throughput repetitions with zero failed requests. The 26B checkpoint downloaded
+15.75 GiB, loaded in approximately 16.35 GiB of GPU memory, selected
+`FlashInferCutlassNvFp4LinearKernel` and `FLASHINFER_CUTLASS`, and passed model
+loading without OOM. Its first startup is longer because FlashInfer compiles
+specialized SM120 CUTLASS MoE kernels and vLLM compiles the execution graph;
+this compilation time is startup overhead, not benchmark latency. The runner
+must wait for `/health` before beginning warm-ups. Measured JSON and the
+generated Markdown report are collected only after the runner finishes or the
+budget guard stops it.
+
+Reusable, non-destructive helpers are included at `scripts/`: run
+`remote_preflight.sh` through the Pod's SSH command before setup, and use
+`collect_results.sh` to copy durable artifacts. Neither helper stops or
+terminates a Pod.
 
 ## References
 

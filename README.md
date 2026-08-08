@@ -62,4 +62,14 @@ snapshot and this README.
   provisioning, execution, collection, and shutdown specification.
 - [`benchmarks/`](benchmarks/): timestamped raw-artifact snapshots; secrets,
   private keys, model caches, and virtual environments are intentionally excluded.
+- [`scripts/remote_preflight.sh`](scripts/remote_preflight.sh): read-only remote
+  identity, GPU, disk, and environment check.
+- [`scripts/collect_results.sh`](scripts/collect_results.sh): copies config,
+  environment, logs, results, and summaries without stopping the Pod.
 
+The helper scripts deliberately do not create or terminate Pods. For example:
+
+```bash
+ssh root@HOST -p PORT -i ~/.ssh/id_ed25519 < scripts/remote_preflight.sh
+scripts/collect_results.sh root@HOST PORT results/20260808T-final ~/.ssh/id_ed25519
+```
