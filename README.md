@@ -3,6 +3,10 @@
 This repository contains the reproducible benchmark specification and captured
 results for Unsloth Gemma 4 NVFP4 text-generation checkpoints on RunPod.
 
+Copy [`.env.example`](.env.example) to `.env` for local CLI workflows. The
+example contains placeholders only; `.env` is ignored and must never be
+committed. SSH private keys and model/Hugging Face tokens follow the same rule.
+
 The detailed, operational procedure is in
 [`RUNPOD_GEMMA_BENCHMARK_SPEC.md`](RUNPOD_GEMMA_BENCHMARK_SPEC.md). It fixes the
 Pod shape, software versions, kernel policy, workloads, retry rules, artifact

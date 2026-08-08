@@ -74,6 +74,10 @@ The local destination is `results/<UTC timestamp>/` in this repository.
 
 ## 3. Remote setup (Python 3.13)
 
+For local automation, copy `.env.example` to `.env` and fill in the RunPod and
+GitHub credentials. These values are used only by local CLI/publishing tools;
+they are never uploaded to the Pod or written into benchmark artifacts.
+
 Run these commands as root or the Pod’s configured user, with the volume mounted:
 
 ```bash
