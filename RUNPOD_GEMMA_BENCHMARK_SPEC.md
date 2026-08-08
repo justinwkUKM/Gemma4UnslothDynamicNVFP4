@@ -74,6 +74,10 @@ The local destination is `results/<UTC timestamp>/` in this repository.
 
 ## 3. Remote setup (Python 3.13)
 
+For local automation, copy `.env.example` to `.env` and fill in the RunPod and
+GitHub credentials. These values are used only by local CLI/publishing tools;
+they are never uploaded to the Pod or written into benchmark artifacts.
+
 Run these commands as root or the Pod’s configured user, with the volume mounted:
 
 ```bash
@@ -105,6 +109,10 @@ Record the resolved versions (`python --version`, `vllm --version`,
 `nvidia-cutlass-dsl`) and the full `pip freeze` in
 `environment/packages.txt`. Installation failure is classified as
 `dependency_installation`; no model download may begin.
+
+The equivalent idempotent helper is `scripts/remote_setup.sh`. It writes
+`environment/pip-check.txt`, `environment/versions.txt`, and
+`environment/packages.txt`; it does not start a server or download a model.
 
 ## 4. Compatibility gate
 
@@ -356,12 +364,29 @@ failure. No Marlin, emulation, CPU offload, or OOM path has been used.
 
 ### Current state
 
-The first checkpoint, `unsloth/gemma-4-E4B-it-NVFP4`, has downloaded 7.55 GiB of
-weights, loaded approximately 7.97 GiB on the GPU, completed vLLM compilation
-and CUDA graph capture, and is proceeding to health-check and identical warm-up
-workloads. The remote runner is still active; measured JSON and the generated
-Markdown report will be collected only after it finishes or the budget guard
-stops it.
+E4B and 12B completed their five warm-ups plus three interactive and three
+throughput repetitions with zero failed requests. The 26B checkpoint downloaded
+15.75 GiB, loaded in approximately 16.35 GiB of GPU memory, selected
+`FlashInferCutlassNvFp4LinearKernel` and `FLASHINFER_CUTLASS`, and passed model
+loading without OOM. Its first startup is longer because FlashInfer compiles
+specialized SM120 CUTLASS MoE kernels and vLLM compiles the execution graph;
+this compilation time is startup overhead, not benchmark latency. The runner
+must wait for `/health` before beginning warm-ups. Measured JSON and the
+generated Markdown report are collected only after the runner finishes or the
+budget guard stops it.
+
+The corrected 26B-only rerun then completed all five warm-ups and six measured
+repetitions with zero failures. Its medians were 215.365 output tokens/s
+interactive and 1,762.931 output tokens/s at concurrency 16. The original
+26B gate failure was a false positive caused by matching `MARLIN` in vLLM's
+list of potential backends; the runner now ignores that list and checks only
+actual selected fallback/error lines. The final local snapshot is
+`benchmarks/20260808T173800Z/`.
+
+Reusable, non-destructive helpers are included at `scripts/`: run
+`remote_preflight.sh` through the Pod's SSH command before setup, and use
+`collect_results.sh` to copy durable artifacts. Neither helper stops or
+terminates a Pod.
 
 ## References
 
