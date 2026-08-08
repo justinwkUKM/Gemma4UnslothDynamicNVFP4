@@ -144,6 +144,7 @@
     <script>
       const MODEL = "gemma-4-26B-A4B-it-NVFP4";
       const ENDPOINT = "http://127.0.0.1:8000/v1/chat/completions";
+      const MAX_TOKENS = 10000;
       const chat = document.getElementById("chat");
       const promptBox = document.getElementById("prompt");
       const send = document.getElementById("send");
@@ -287,7 +288,7 @@ Start immediately with Agent 1 and continue through Agent 50.` },
           body: JSON.stringify({
             model: MODEL,
             messages: [{ role: "user", content: prompt }],
-            max_tokens: 2048,
+            max_tokens: MAX_TOKENS,
             temperature: 0.7,
             stream: true,
             stream_options: { include_usage: true },
