@@ -62,7 +62,9 @@
 
       #chat {
         min-height: 430px; display: flex; flex-direction: column; gap: 24px;
-        padding: 25px 0 125px;
+        /* Keep the final streamed lines above the fixed composer, including when
+           the textarea has expanded to its maximum height. */
+        padding: 25px 0 230px;
       }
       .message { display: flex; gap: 10px; align-items: flex-start; }
       .message.user { justify-content: flex-end; }
