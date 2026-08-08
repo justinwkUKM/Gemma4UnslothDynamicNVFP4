@@ -38,6 +38,11 @@
       }
       .meta strong { color: var(--text); font-weight: 600; }
       .meta code { color: #706a62; word-break: break-all; }
+      .samples { margin: 16px auto 0; width: min(760px, 100%); text-align: left; }
+      .samples summary { width: fit-content; margin: auto; color: var(--muted); cursor: pointer; font-size: .82rem; }
+      .sample-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px; margin-top: 12px; }
+      .sample-button { width: 100%; height: auto; padding: 9px 10px; text-align: left; border: 1px solid var(--border); border-radius: 9px; background: var(--panel); color: var(--text); font-size: .78rem; font-weight: 500; }
+      .sample-button:hover { background: var(--panel-soft); }
       .clear-button {
         width: auto; height: auto; padding: 2px 7px; border: 0; border-radius: 6px;
         background: transparent; color: var(--muted); font-size: .76rem;
@@ -102,6 +107,10 @@
           <span>URL: <code id="endpoint">http://127.0.0.1:8000/v1/chat/completions</code></span>
           <button class="clear-button" id="clear" type="button">Clear chat</button>
         </div>
+        <details class="samples">
+          <summary>Load a benchmark-style sample prompt</summary>
+          <div class="sample-grid" id="sample-grid"></div>
+        </details>
       </header>
 
       <section id="chat" aria-live="polite">
@@ -126,7 +135,83 @@
       const send = document.getElementById("send");
       const composer = document.getElementById("composer");
       const clear = document.getElementById("clear");
+      const sampleGrid = document.getElementById("sample-grid");
       let activeController = null;
+
+      const samples = [
+        { label: "1 · Secure local AI server", prompt: `Write a detailed 1,000-word guide titled "How to Build a Secure Local AI Server".
+Cover hardware, GPU memory, inference engines, model loading, API serving, authentication, logging, monitoring and security.
+Do not stop until the guide is complete.` },
+        { label: "2 · 100 enterprise uses", prompt: `Generate 100 practical uses of AI in an enterprise.
+Number them 1–100.
+Each item must be exactly one sentence.
+Start immediately without an introduction.` },
+        { label: "3 · FastAPI AI gateway", prompt: `Build a complete Python FastAPI application for an internal AI gateway.
+Include authentication, rate limiting, request logging, model routing, token counting, health checks, error handling and Docker deployment.
+Provide complete runnable code and explain the architecture afterward.` },
+        { label: "4 · SOC credential compromise", prompt: `You are a senior SOC analyst.
+Create a detailed incident-response playbook for a suspected credential compromise.
+Include detection logic, investigation steps, evidence collection, containment, eradication, recovery and lessons learned.
+Include example SIEM queries and pseudocode where useful.` },
+        { label: "5 · LLM infrastructure reasoning", prompt: `A company has 100 developers using an internal LLM.
+Each developer sends 30 requests per day.
+Average input is 4,000 tokens and average output is 800 tokens.
+
+Design the infrastructure required to serve them locally.
+Estimate throughput, concurrency, GPU requirements and bottlenecks.
+Explain your calculations step by step.` },
+        { label: "6 · 50-risk AI register", prompt: `Create a comprehensive AI risk register containing 50 risks for an enterprise deploying generative AI.
+
+Return a Markdown table with:
+ID | Risk | Threat Scenario | Impact | Likelihood | Controls | Residual Risk
+
+Make every entry distinct and technically meaningful.` },
+        { label: "7 · JSON incident dataset", prompt: `Generate a valid JSON dataset containing 100 fictional cybersecurity incidents.
+
+Each object must contain:
+incident_id
+timestamp
+attack_type
+source_ip
+target_system
+severity
+mitre_technique
+description
+recommended_action
+
+Return JSON only.` },
+        { label: "8 · Malaysian payment ecosystem", prompt: `Explain Malaysia's payment ecosystem to a new cybersecurity engineer.
+Cover DuitNow, FPX, IBG, MyDebit, payment gateways, banks and payment network operators.
+Explain how a payment transaction flows from customer to merchant and where cybersecurity risks can arise.
+Write approximately 1,000 words.
+
+Don't use this as an accuracy benchmark without independently validating facts, but it's useful for testing locally relevant language generation.` },
+        { label: "9 · Bahasa Melayu finance", prompt: `Terangkan bagaimana kecerdasan buatan generatif boleh digunakan dengan selamat dalam sebuah institusi kewangan di Malaysia.
+Berikan 20 contoh penggunaan, risiko utama, dan kawalan yang perlu dilaksanakan.
+Jawab sepenuhnya dalam Bahasa Melayu.` },
+        { label: "10 · 50-agent SOC showcase", prompt: `You are designing a futuristic cybersecurity operations centre powered by AI agents.
+
+Describe 50 specialised AI agents.
+For each agent provide:
+Name → Purpose → Input → Action → Output
+
+Make each agent genuinely different.
+Start immediately with Agent 1 and continue through Agent 50.` },
+      ];
+
+      for (const sample of samples) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "sample-button";
+        button.textContent = sample.label;
+        button.addEventListener("click", () => {
+          promptBox.value = sample.prompt;
+          promptBox.focus();
+          promptBox.style.height = "auto";
+          promptBox.style.height = `${Math.min(promptBox.scrollHeight, 150)}px`;
+        });
+        sampleGrid.append(button);
+      }
 
       function escapeHtml(value) {
         return value.replace(/[&<>"']/g, (character) => ({
