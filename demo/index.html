@@ -151,6 +151,7 @@
       const composer = document.getElementById("composer");
       const clear = document.getElementById("clear");
       const sampleGrid = document.getElementById("sample-grid");
+      const samplesPanel = sampleGrid.closest("details");
       const speed = document.getElementById("speed");
       const ttft = document.getElementById("ttft");
       const tokens = document.getElementById("tokens");
@@ -227,6 +228,7 @@ Start immediately with Agent 1 and continue through Agent 50.` },
           promptBox.focus();
           promptBox.style.height = "auto";
           promptBox.style.height = `${Math.min(promptBox.scrollHeight, 150)}px`;
+          samplesPanel.open = false;
         });
         sampleGrid.append(button);
       }
