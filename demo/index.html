@@ -47,6 +47,8 @@
         color: #176b45; background: #e5f5eb; border: 1px solid #b9e4c9;
         padding: 2px 9px; border-radius: 999px; font-weight: 700; white-space: nowrap;
       }
+      #ttft { color: #315d9a; background: #eaf1fb; border: 1px solid #c7d9f2; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+      #tokens { color: #73539c; background: #f2ecfa; border: 1px solid #ddcef0; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
       .samples { margin: 16px auto 0; width: min(760px, 100%); text-align: left; }
       .samples summary { width: fit-content; margin: auto; color: var(--muted); cursor: pointer; font-size: .82rem; }
       .sample-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px; margin-top: 12px; }
@@ -115,6 +117,8 @@
           <span>Model: <strong id="model-name">gemma-4-26B-A4B-it-NVFP4</strong></span>
           <span>URL: <code id="endpoint">http://127.0.0.1:8000/v1/chat/completions</code></span>
           <span id="speed">Speed: —</span>
+          <span id="ttft">TTFT: —</span>
+          <span id="tokens">Tokens: —</span>
           <button class="clear-button" id="clear" type="button">Clear chat</button>
         </div>
         <details class="samples">
@@ -147,6 +151,8 @@
       const clear = document.getElementById("clear");
       const sampleGrid = document.getElementById("sample-grid");
       const speed = document.getElementById("speed");
+      const ttft = document.getElementById("ttft");
+      const tokens = document.getElementById("tokens");
       let activeController = null;
 
       const samples = [
@@ -294,6 +300,8 @@ Start immediately with Agent 1 and continue through Agent 50.` },
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
+        const requestStartedAt = performance.now();
+        let firstTokenAt = null;
         let startedAt = null;
         let generatedText = "";
         while (true) {
@@ -312,8 +320,13 @@ Start immediately with Agent 1 and continue through Agent 50.` },
               if (chunk.usage?.completion_tokens && startedAt) {
                 const elapsed = (performance.now() - startedAt) / 1000;
                 speed.textContent = `Speed: ${(chunk.usage.completion_tokens / elapsed).toFixed(1)} tok/s`;
+                tokens.textContent = `Tokens: ${chunk.usage.completion_tokens}`;
               }
               if (content) {
+                if (!firstTokenAt) {
+                  firstTokenAt = performance.now();
+                  ttft.textContent = `TTFT: ${(firstTokenAt - requestStartedAt).toFixed(0)} ms`;
+                }
                 if (!startedAt) startedAt = performance.now();
                 generatedText += content;
                 bubble.dataset.raw += content;
@@ -321,6 +334,7 @@ Start immediately with Agent 1 and continue through Agent 50.` },
                 const estimatedTokens = Math.max(1, Math.round(generatedText.length / 4));
                 const elapsed = Math.max((performance.now() - startedAt) / 1000, 0.001);
                 speed.textContent = `Speed: ${(estimatedTokens / elapsed).toFixed(1)} tok/s (est.)`;
+                tokens.textContent = `Tokens: ~${estimatedTokens}`;
                 scrollToLatest();
               }
             } catch (_) { /* Ignore incomplete/non-content SSE frames. */ }
@@ -339,6 +353,8 @@ Start immediately with Agent 1 and continue through Agent 50.` },
         const bubble = addMessage("assistant");
         send.disabled = true;
         speed.textContent = "Speed: starting…";
+        ttft.textContent = "TTFT: waiting…";
+        tokens.textContent = "Tokens: 0";
         try {
           await streamAnswer(prompt, bubble);
         } catch (error) {
@@ -357,6 +373,8 @@ Start immediately with Agent 1 and continue through Agent 50.` },
         chat.innerHTML = '<div class="empty" id="empty">Ask a question to see the model stream its answer.</div>';
         promptBox.value = "";
         speed.textContent = "Speed: —";
+        ttft.textContent = "TTFT: —";
+        tokens.textContent = "Tokens: —";
         send.disabled = false;
         promptBox.focus();
         window.scrollTo(0, 0);
