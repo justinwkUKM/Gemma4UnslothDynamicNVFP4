@@ -1,0 +1,32 @@
+{
+  "model_id": "gemma-4-E4B-it-NVFP4",
+  "checkpoint": "unsloth/gemma-4-E4B-it-NVFP4",
+  "loaded": true,
+  "kernel_positive": true,
+  "kernel_bad_match": null,
+  "startup_seconds": null,
+  "command": [
+    "/workspace/gemma4-benchmark/env/bin/vllm",
+    "serve",
+    "unsloth/gemma-4-E4B-it-NVFP4",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "8000",
+    "--served-model-name",
+    "unsloth/gemma-4-E4B-it-NVFP4",
+    "--max-model-len",
+    "8192",
+    "--gpu-memory-utilization",
+    "0.90",
+    "--reasoning-parser",
+    "gemma4",
+    "--linear-backend",
+    "auto",
+    "--moe-backend",
+    "flashinfer_cutlass",
+    "--seed",
+    "0"
+  ],
+  "utc": "2026-08-08T16:52:56.105356+00:00"
+}

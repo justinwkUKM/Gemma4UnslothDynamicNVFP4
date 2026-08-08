@@ -375,6 +375,14 @@ must wait for `/health` before beginning warm-ups. Measured JSON and the
 generated Markdown report are collected only after the runner finishes or the
 budget guard stops it.
 
+The corrected 26B-only rerun then completed all five warm-ups and six measured
+repetitions with zero failures. Its medians were 215.365 output tokens/s
+interactive and 1,762.931 output tokens/s at concurrency 16. The original
+26B gate failure was a false positive caused by matching `MARLIN` in vLLM's
+list of potential backends; the runner now ignores that list and checks only
+actual selected fallback/error lines. The final local snapshot is
+`benchmarks/20260808T173800Z/`.
+
 Reusable, non-destructive helpers are included at `scripts/`: run
 `remote_preflight.sh` through the Pod's SSH command before setup, and use
 `collect_results.sh` to copy durable artifacts. Neither helper stops or
