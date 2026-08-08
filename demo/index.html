@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gemma 4 26B Inference Demo</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #fbfaf8;
+        --panel: #ffffff;
+        --panel-soft: #f4f3f0;
+        --border: #e5e2dc;
+        --text: #292724;
+        --muted: #77736d;
+        --accent: #292724;
+        --accent-hover: #4a4640;
+        --user: #f0eee9;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font: 15px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+      }
+
+      .app { width: min(820px, 100%); margin: 0 auto; padding: 26px 20px; }
+      header { margin-bottom: 8px; text-align: center; }
+      h1 { margin: 0 0 4px; font-size: clamp(1.25rem, 3vw, 1.55rem); font-weight: 650; letter-spacing: -.02em; }
+      .subtitle { color: var(--muted); margin: 0; }
+      .meta {
+        display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px;
+        justify-content: center; padding: 8px 12px; border: 1px solid var(--border); border-radius: 999px;
+        background: rgba(255, 255, 255, .7); color: var(--muted); font-size: .76rem;
+      }
+      .meta strong { color: var(--text); font-weight: 600; }
+      .meta code { color: #b9c9ff; word-break: break-all; }
+
+      #chat {
+        min-height: 430px; display: flex; flex-direction: column; gap: 24px;
+        padding: 25px 0 125px;
+      }
+      .message { display: flex; gap: 10px; align-items: flex-start; }
+      .message.user { justify-content: flex-end; }
+      .bubble {
+        max-width: min(760px, 92%); padding: 0; border-radius: 15px;
+        white-space: pre-wrap; overflow-wrap: anywhere; font-size: .98rem;
+      }
+      .assistant .bubble { padding-left: 2px; }
+      .user .bubble { background: var(--user); padding: 10px 14px; }
+      .label { color: var(--muted); font-size: .72rem; margin: 0 0 5px 0; font-weight: 600; }
+
+      .composer {
+        position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+        width: min(864px, calc(100% - 36px)); display: flex; gap: 9px;
+        padding: 9px; border: 1px solid #d8d4cd; border-radius: 18px;
+        background: rgba(255, 255, 255, .96); box-shadow: 0 8px 30px rgba(57, 49, 40, .12);
+      }
+      textarea {
+        flex: 1; min-height: 42px; max-height: 150px; resize: vertical;
+        border: 0; outline: 0; border-radius: 10px; padding: 10px 12px;
+        background: var(--panel-soft); color: var(--text); font: inherit;
+      }
+      textarea::placeholder { color: #9a958c; }
+      button {
+        align-self: flex-end; width: 42px; height: 42px; border: 0; border-radius: 10px;
+        background: var(--accent); color: white; cursor: pointer; font-size: 1.15rem;
+      }
+      button:hover { background: var(--accent-hover); }
+      button:disabled { opacity: .5; cursor: wait; }
+      .empty { color: var(--muted); text-align: center; margin: auto; }
+      .error { color: #ff9b9b; }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>Gemma 4 26B inference</h1>
+        <p class="subtitle">Streaming response demo through the local SSH tunnel.</p>
+        <div class="meta">
+          <span>Model: <strong id="model-name">gemma-4-26B-A4B-it-NVFP4</strong></span>
+          <span>URL: <code id="endpoint">http://127.0.0.1:8000/v1/chat/completions</code></span>
+        </div>
+      </header>
+
+      <section id="chat" aria-live="polite">
+        <div class="empty" id="empty">Ask a question to see the model stream its answer.</div>
+      </section>
+    </main>
+
+    <form class="composer" id="composer">
+      <textarea id="prompt" rows="1" placeholder="Message Gemma..." aria-label="Message"></textarea>
+      <button id="send" type="submit" aria-label="Send message" title="Send">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path d="M4 4.8 20 12 4 19.2l2.1-5.8L15.5 12 6.1 10.6 4 4.8Z" fill="currentColor" />
+        </svg>
+      </button>
+    </form>
+
+    <script>
+      const MODEL = "gemma-4-26B-A4B-it-NVFP4";
+      const ENDPOINT = "http://127.0.0.1:8000/v1/chat/completions";
+      const chat = document.getElementById("chat");
+      const promptBox = document.getElementById("prompt");
+      const send = document.getElementById("send");
+      const composer = document.getElementById("composer");
+      const empty = document.getElementById("empty");
+
+      function addMessage(role, text = "") {
+        empty?.remove();
+        const wrapper = document.createElement("article");
+        wrapper.className = `message ${role}`;
+        const content = document.createElement("div");
+        const label = document.createElement("div");
+        label.className = "label";
+        label.textContent = role === "user" ? "You" : "Gemma 4 26B";
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = text;
+        content.append(label, bubble);
+        wrapper.append(content);
+        chat.append(wrapper);
+        chat.scrollTop = chat.scrollHeight;
+        return bubble;
+      }
+
+      async function streamAnswer(prompt, bubble) {
+        const response = await fetch(ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 256,
+            temperature: 0.7,
+            stream: true,
+          }),
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        if (!response.body) throw new Error("The browser did not receive a streaming response.");
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        while (true) {
+          const { value, done } = await reader.read();
+          buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+          const events = buffer.split("\n\n");
+          buffer = events.pop() || "";
+          for (const event of events) {
+            const line = event.split("\n").find((item) => item.startsWith("data: "));
+            if (!line) continue;
+            const data = line.slice(6).trim();
+            if (data === "[DONE]") return;
+            try {
+              const content = JSON.parse(data).choices?.[0]?.delta?.content;
+              if (content) {
+                bubble.textContent += content;
+                chat.scrollTop = chat.scrollHeight;
+              }
+            } catch (_) { /* Ignore incomplete/non-content SSE frames. */ }
+          }
+          if (done) break;
+        }
+      }
+
+      composer.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const prompt = promptBox.value.trim();
+        if (!prompt || send.disabled) return;
+        promptBox.value = "";
+        addMessage("user", prompt);
+        const bubble = addMessage("assistant");
+        send.disabled = true;
+        try {
+          await streamAnswer(prompt, bubble);
+        } catch (error) {
+          bubble.className += " error";
+          bubble.textContent = `Unable to reach the model: ${error.message}`;
+        } finally {
+          send.disabled = false;
+          promptBox.focus();
+        }
+      });
+
+      promptBox.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) composer.requestSubmit();
+      });
+    </script>
+  </body>
+</html>
