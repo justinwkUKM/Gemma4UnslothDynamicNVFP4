@@ -105,6 +105,7 @@
         <div class="meta">
           <span>Model: <strong id="model-name">gemma-4-26B-A4B-it-NVFP4</strong></span>
           <span>URL: <code id="endpoint">http://127.0.0.1:8000/v1/chat/completions</code></span>
+          <span id="speed">Speed: —</span>
           <button class="clear-button" id="clear" type="button">Clear chat</button>
         </div>
         <details class="samples">
@@ -136,6 +137,7 @@
       const composer = document.getElementById("composer");
       const clear = document.getElementById("clear");
       const sampleGrid = document.getElementById("sample-grid");
+      const speed = document.getElementById("speed");
       let activeController = null;
 
       const samples = [
@@ -273,6 +275,7 @@ Start immediately with Agent 1 and continue through Agent 50.` },
             max_tokens: 2048,
             temperature: 0.7,
             stream: true,
+            stream_options: { include_usage: true },
           }),
           signal: activeController.signal,
         });
@@ -282,6 +285,8 @@ Start immediately with Agent 1 and continue through Agent 50.` },
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = "";
+        let startedAt = null;
+        let generatedText = "";
         while (true) {
           const { value, done } = await reader.read();
           buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
@@ -293,10 +298,20 @@ Start immediately with Agent 1 and continue through Agent 50.` },
             const data = line.slice(6).trim();
             if (data === "[DONE]") return;
             try {
-              const content = JSON.parse(data).choices?.[0]?.delta?.content;
+              const chunk = JSON.parse(data);
+              const content = chunk.choices?.[0]?.delta?.content;
+              if (chunk.usage?.completion_tokens && startedAt) {
+                const elapsed = (performance.now() - startedAt) / 1000;
+                speed.textContent = `Speed: ${(chunk.usage.completion_tokens / elapsed).toFixed(1)} tok/s`;
+              }
               if (content) {
+                if (!startedAt) startedAt = performance.now();
+                generatedText += content;
                 bubble.dataset.raw += content;
                 bubble.innerHTML = renderMarkdown(bubble.dataset.raw);
+                const estimatedTokens = Math.max(1, Math.round(generatedText.length / 4));
+                const elapsed = Math.max((performance.now() - startedAt) / 1000, 0.001);
+                speed.textContent = `Speed: ${(estimatedTokens / elapsed).toFixed(1)} tok/s (est.)`;
                 scrollToLatest();
               }
             } catch (_) { /* Ignore incomplete/non-content SSE frames. */ }
@@ -314,6 +329,7 @@ Start immediately with Agent 1 and continue through Agent 50.` },
         addMessage("user", prompt);
         const bubble = addMessage("assistant");
         send.disabled = true;
+        speed.textContent = "Speed: starting…";
         try {
           await streamAnswer(prompt, bubble);
         } catch (error) {
@@ -331,6 +347,7 @@ Start immediately with Agent 1 and continue through Agent 50.` },
         activeController = null;
         chat.innerHTML = '<div class="empty" id="empty">Ask a question to see the model stream its answer.</div>';
         promptBox.value = "";
+        speed.textContent = "Speed: —";
         send.disabled = false;
         promptBox.focus();
         window.scrollTo(0, 0);
