@@ -87,6 +87,10 @@
       .bubble pre { overflow-x: auto; margin: 8px 0 11px; padding: 12px; border: 1px solid var(--border); border-radius: 9px; background: #0f141b; }
       .bubble pre code { padding: 0; background: transparent; }
       .bubble a { color: #83b2ff; }
+      .bubble table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; margin: 10px 0 14px; font-size: .9rem; }
+      .bubble th, .bubble td { min-width: 130px; padding: 8px 10px; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+      .bubble th { background: #1b2a3d; color: #dce9ff; font-weight: 650; }
+      .bubble td { background: #111820; }
 
       .composer {
         position: fixed; left: 50%; bottom: 34px; transform: translateX(-50%);
@@ -252,6 +256,17 @@ Start immediately with Agent 1 and continue through Agent 50.` },
       function renderMarkdown(source) {
         let html = escapeHtml(source);
         html = html.replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>");
+        html = html.replace(/(^\|.+\n\|[\s|:-]+\n(?:\|.*\n?)+)/gm, (tableBlock) => {
+          const rows = tableBlock.trim().split("\n").map((row) =>
+            row.trim().replace(/^\||\|$/g, "").split("|").map((cell) => cell.trim())
+          );
+          if (rows.length < 3) return tableBlock;
+          const header = rows[0].map((cell) => `<th>${cell}</th>`).join("");
+          const body = rows.slice(2).map((row) =>
+            `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`
+          ).join("");
+          return `<table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table>`;
+        });
         html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
         html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
         html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
@@ -262,7 +277,7 @@ Start immediately with Agent 1 and continue through Agent 50.` },
         html = html.replace(/`([^`\n]+)`/g, "<code>$1</code>");
         html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
         return html.split(/\n{2,}/).map((block) => {
-          if (/^<(h[1-3]|pre|ul)>/.test(block)) return block;
+          if (/^<(h[1-3]|pre|ul|table)>/.test(block)) return block;
           return `<p>${block.replace(/\n/g, "<br>")}</p>`;
         }).join("");
       }
