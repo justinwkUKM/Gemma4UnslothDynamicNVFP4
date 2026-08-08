@@ -144,6 +144,7 @@
     <script>
       const MODEL = "gemma-4-26B-A4B-it-NVFP4";
       const ENDPOINT = "http://127.0.0.1:8000/v1/chat/completions";
+      const CONTEXT_WINDOW = 8192;
       const MAX_TOKENS = 8192;
       const chat = document.getElementById("chat");
       const promptBox = document.getElementById("prompt");
@@ -262,6 +263,12 @@ Start immediately with Agent 1 and continue through Agent 50.` },
         requestAnimationFrame(() => window.scrollTo(0, document.documentElement.scrollHeight));
       }
 
+      function outputBudget(prompt) {
+        // Conservative estimate: reserve input tokens plus chat-template overhead.
+        const estimatedInputTokens = Math.ceil(prompt.length / 3) + 64;
+        return Math.max(1, Math.min(MAX_TOKENS, CONTEXT_WINDOW - estimatedInputTokens));
+      }
+
       function addMessage(role, text = "") {
         document.getElementById("empty")?.remove();
         const wrapper = document.createElement("article");
@@ -290,7 +297,7 @@ Start immediately with Agent 1 and continue through Agent 50.` },
           body: JSON.stringify({
             model: MODEL,
             messages: [{ role: "user", content: prompt }],
-            max_tokens: MAX_TOKENS,
+            max_tokens: outputBudget(prompt),
             temperature: 0.7,
             stream: true,
             stream_options: { include_usage: true },

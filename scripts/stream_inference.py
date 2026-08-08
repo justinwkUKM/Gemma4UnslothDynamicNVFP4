@@ -32,10 +32,12 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    estimated_input_tokens = (len(args.prompt) + 2) // 3 + 64
+    output_budget = max(1, min(args.max_tokens, 8192 - estimated_input_tokens))
     payload = {
         "model": args.model,
         "messages": [{"role": "user", "content": args.prompt}],
-        "max_tokens": args.max_tokens,
+        "max_tokens": output_budget,
         "temperature": args.temperature,
         "stream": True,
     }
