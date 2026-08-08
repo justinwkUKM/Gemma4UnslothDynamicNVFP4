@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+workspace/
+cache/
+model-cache/
+*.pem
+*.key
+id_ed25519
+id_ed25519.pub
