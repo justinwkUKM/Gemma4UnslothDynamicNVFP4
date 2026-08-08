@@ -64,6 +64,8 @@ snapshot and this README.
   private keys, model caches, and virtual environments are intentionally excluded.
 - [`scripts/remote_preflight.sh`](scripts/remote_preflight.sh): read-only remote
   identity, GPU, disk, and environment check.
+- [`scripts/remote_setup.sh`](scripts/remote_setup.sh): idempotent Python 3.13,
+  vLLM, FlashInfer, and CUTLASS environment setup.
 - [`scripts/collect_results.sh`](scripts/collect_results.sh): copies config,
   environment, logs, results, and summaries without stopping the Pod.
 
@@ -71,5 +73,6 @@ The helper scripts deliberately do not create or terminate Pods. For example:
 
 ```bash
 ssh root@HOST -p PORT -i ~/.ssh/id_ed25519 < scripts/remote_preflight.sh
+ssh root@HOST -p PORT -i ~/.ssh/id_ed25519 < scripts/remote_setup.sh
 scripts/collect_results.sh root@HOST PORT results/20260808T-final ~/.ssh/id_ed25519
 ```

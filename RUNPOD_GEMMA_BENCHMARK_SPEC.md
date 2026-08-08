@@ -106,6 +106,10 @@ Record the resolved versions (`python --version`, `vllm --version`,
 `environment/packages.txt`. Installation failure is classified as
 `dependency_installation`; no model download may begin.
 
+The equivalent idempotent helper is `scripts/remote_setup.sh`. It writes
+`environment/pip-check.txt`, `environment/versions.txt`, and
+`environment/packages.txt`; it does not start a server or download a model.
+
 ## 4. Compatibility gate
 
 Before downloading a checkpoint, save these reports:
