@@ -31,7 +31,7 @@ fi
 uv pip install --python "$root_dir/env/bin/python" \
   'vllm[bench]>=0.25.0' 'flashinfer-python>=0.6.13' 'nvidia-cutlass-dsl>=4.5.2'
 
-"$root_dir/env/bin/python" -m pip check | tee "$root_dir/environment/pip-check.txt"
+uv pip check --python "$root_dir/env/bin/python" | tee "$root_dir/environment/pip-check.txt"
 "$root_dir/env/bin/python" - <<'PY' | tee "$root_dir/environment/versions.txt"
 import importlib.metadata as metadata
 import platform, sys
@@ -41,5 +41,5 @@ for package in ("torch", "vllm", "flashinfer-python", "nvidia-cutlass-dsl"):
     try: print(f"{package}=={metadata.version(package)}")
     except metadata.PackageNotFoundError: print(f"{package}==MISSING")
 PY
-"$root_dir/env/bin/python" -m pip freeze > "$root_dir/environment/packages.txt"
+uv pip freeze --python "$root_dir/env/bin/python" > "$root_dir/environment/packages.txt"
 echo "setup complete: $root_dir"

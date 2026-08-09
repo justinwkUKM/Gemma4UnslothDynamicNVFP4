@@ -1,0 +1,24 @@
+{
+  "campaign_status": "partial",
+  "completion_tokens": 6877,
+  "contract_valid": 8,
+  "decode_tokens_per_second": 201.32384319527847,
+  "errors": 1,
+  "investigations": 9,
+  "latency_seconds_median": 3.7151068224338815,
+  "prompt_tokens": 24105,
+  "request_cost_usd_sum": 0.007026978442942102,
+  "request_throughput_per_second": 0.2716745076983255,
+  "risk_score_median": 70.0,
+  "scored": false,
+  "status_counts": {
+    "suspicious": 8
+  },
+  "success": 8,
+  "successful_completion_tokens": 5853,
+  "successful_prompt_tokens": 21919,
+  "successful_total_tokens": 27772,
+  "total_tokens": 30982,
+  "tpot_seconds_median": 0.004974690795604093,
+  "ttft_seconds_median": 0.038859693449921906
+}
