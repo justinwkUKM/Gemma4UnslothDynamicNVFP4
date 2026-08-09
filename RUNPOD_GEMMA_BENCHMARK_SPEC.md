@@ -468,3 +468,37 @@ terminates a Pod.
 * [vLLM Gemma 4 recipe](https://docs.vllm.ai/projects/recipes/en/stable/Google/Gemma4.html)
 * [RunPod pricing and storage](https://docs.runpod.io/pods/pricing)
 * [RunPod Pod management](https://docs.runpod.io/pods/manage-pods)
+
+## 13. Future campaign preflight, manifests, and cost shutdown
+
+Qwen3.6, MoE-efficiency, and security-reasoning runs use the common manifest in
+`campaigns/common.py`; they do not write into a completed timestamped Gemma
+snapshot. Before allocating GPU compute, `scripts/test_all.sh` must pass in
+full. Context-generation and report/evaluator tests run locally.
+
+Qwen3.6 35B backend probing is ordered and exhaustive:
+`flashinfer_cutedsl`, `flashinfer_trtllm`, then `cutlass`. Each attempt gets its
+own server log and startup GPU telemetry. A healthy endpoint is insufficient:
+the log must explicitly confirm that vLLM selected the requested backend. CPU
+offload, Marlin, Triton, emulation, OOM, unsupported quantization, and
+unconfirmed selection are preserved as non-rankable compatibility outcomes.
+Only the missing 35B checkpoint runs by default; historical 27B artifacts and
+reported numbers remain unchanged.
+
+Every campaign manifest records dataset/model versions, backend, context limit,
+seed, prompt hash, environment hash, GPU type, UTC start/deadline, hourly rate,
+status, acceptance requirements, and SHA-256 hashes for artifacts. `complete`
+is invalid unless all declared requirements are true. Successful requests or
+repetitions are skipped on resume; changed identity settings fail the resume.
+
+After remote collection, run `scripts/verify_campaign.py COLLECTED_ROOT`. Only
+then may an authorized operator stop the exact Pod with:
+
+```bash
+export RUNPOD_API_KEY=...
+scripts/stop_runpod_after_verify.sh --authorized POD_ID COLLECTED_ROOT
+```
+
+The helper verifies terminal manifest state and all artifact hashes, confirms
+the returned Pod identity, requests `EXITED`, verifies the stopped state, and
+does not delete the persistent volume.

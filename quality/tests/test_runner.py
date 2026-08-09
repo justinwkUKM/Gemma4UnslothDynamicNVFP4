@@ -1,6 +1,7 @@
 import sys
 import tempfile
 import unittest
+import json
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -28,6 +29,17 @@ class RunnerPersistenceTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(first["temperature"], 0)
         self.assertFalse(first["stream"])
+
+    def test_qwen_gate_requires_matching_rank_eligible_backend(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "compatibility.json"
+            path.write_text(json.dumps({"attempts": [
+                {"backend": "flashinfer_cutedsl", "status": "supported", "rank_eligible": True}
+            ]}))
+            selected = runner.validate_compatibility_gate(path, "flashinfer_cutedsl")
+            self.assertEqual(selected["status"], "supported")
+            with self.assertRaises(ValueError):
+                runner.validate_compatibility_gate(path, "cutlass")
 
 
 if __name__ == "__main__":

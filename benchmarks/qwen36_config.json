@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "campaign": "qwen36",
+  "models": {
+    "qwen3.6-27B-NVFP4": {
+      "checkpoint": "unsloth/Qwen3.6-27B-NVFP4",
+      "historical_status": "complete",
+      "run_by_default": false
+    },
+    "qwen3.6-35B-A3B-NVFP4": {
+      "checkpoint": "unsloth/Qwen3.6-35B-A3B-NVFP4",
+      "historical_status": "missing",
+      "run_by_default": true
+    }
+  },
+  "backend_probe_order": [
+    "flashinfer_cutedsl",
+    "flashinfer_trtllm",
+    "cutlass"
+  ],
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8000,
+    "context_limit": 4096,
+    "max_num_seqs": 16,
+    "gpu_memory_utilization": 0.9,
+    "seed": 0
+  },
+  "workloads": {
+    "smoke": {"input_tokens": 128, "output_tokens": 32, "requests": 1, "concurrency": 1, "repetitions": 1},
+    "warmup": {"input_tokens": 512, "output_tokens": 512, "requests": 5, "concurrency": 1, "repetitions": 5},
+    "interactive": {"input_tokens": 512, "output_tokens": 512, "requests": 10, "concurrency": 1, "repetitions": 3},
+    "throughput": {"input_tokens": 512, "output_tokens": 512, "requests": 100, "concurrency": 16, "repetitions": 3}
+  }
+}

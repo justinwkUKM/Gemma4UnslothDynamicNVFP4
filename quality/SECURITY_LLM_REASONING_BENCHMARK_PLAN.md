@@ -1,6 +1,8 @@
 # Security LLM real-time reasoning benchmark plan
 
-This is a future, separately budgeted evaluation track. It is not part of the
+This is a separately budgeted evaluation track. The incremental executable
+foundation is in [`security/`](security/); dataset acquisition and full public
+plus unseen campaigns remain outstanding. It is not part of the
 completed Gemma quality score or synthetic serving benchmark.
 
 ## Research question

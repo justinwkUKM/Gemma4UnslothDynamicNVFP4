@@ -1,6 +1,8 @@
 # MoE efficiency evaluation plan
 
-This is a future, separately budgeted performance study. It must not alter the
+This is a separately budgeted performance study. Its executable implementation
+is [`moe_runner.py`](moe_runner.py), with fixed defaults in
+[`moe_config.json`](moe_config.json). It must not alter the
 100-prompt quality campaign or the existing synthetic benchmark rankings.
 
 ## Questions

@@ -1,0 +1,15 @@
+{
+  "dataset": "otrf",
+  "track": "public",
+  "field_map": {
+    "event_id": "event_id",
+    "timestamp": "timestamp",
+    "source_type": "source_type",
+    "entity_id": "host",
+    "action": "action",
+    "outcome": "outcome"
+  },
+  "default_window_seconds": 30,
+  "labels_must_be_separate": true,
+  "anonymization_required": true
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "darpa-optc",
+  "track": "public",
+  "field_map": {
+    "event_id": "id",
+    "timestamp": "timestamp",
+    "source_type": "object_type",
+    "entity_id": "host",
+    "action": "action",
+    "outcome": "status"
+  },
+  "labels_must_be_separate": true,
+  "anonymization_required": true,
+  "multi_stage_reconstruction": true
+}

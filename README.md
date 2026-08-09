@@ -3,10 +3,9 @@
 This repository contains the reproducible benchmark specification and captured
 results for Unsloth Gemma 4 NVFP4 text-generation checkpoints on RunPod.
 
-It now has two deliberately separate tracks: the existing synthetic performance
-campaign measures serving speed, while [`quality/`](quality/) measures factual
-and instruction quality with 100 fixed prompts. A quality score is not a
-throughput score and the two must not be combined into a single metric.
+It now has four deliberately separate tracks: synthetic serving performance,
+the 100-prompt reference quality suite, controlled MoE efficiency, and
+replayable security-telemetry reasoning. Their scores are never combined.
 
 Copy [`.env.example`](.env.example) to `.env` for local CLI workflows. The
 example contains placeholders only; `.env` is ignored and must never be
@@ -16,6 +15,46 @@ The detailed, operational procedure is in
 [`RUNPOD_GEMMA_BENCHMARK_SPEC.md`](RUNPOD_GEMMA_BENCHMARK_SPEC.md). It fixes the
 Pod shape, software versions, kernel policy, workloads, retry rules, artifact
 layout, and budget limits.
+
+## Mandatory local pre-GPU gate
+
+Run this before starting or resuming any billable GPU:
+
+```bash
+scripts/test_all.sh
+```
+
+The command compiles every runner, executes all campaign suites, and validates
+the committed 100-prompt dataset. The runners also support context-only or
+probe-only smoke paths. A failed local gate must never be worked around by
+starting a GPU.
+
+Every new campaign writes `campaign.json` with the dataset/model versions,
+backend, context, seed, prompt/config/environment hashes, GPU identity,
+deadline, hourly rate, status, acceptance requirements, and artifact hashes.
+Reusing a campaign directory resumes successful work and rejects changed
+identity settings.
+
+## New campaign runners
+
+- [`benchmarks/qwen36_runner.py`](benchmarks/qwen36_runner.py) defaults only to
+  the missing Qwen3.6 35B work. It probes `flashinfer_cutedsl`,
+  `flashinfer_trtllm`, then `cutlass`, records every outcome, and requires an
+  explicit vLLM backend-selection line before any score can be ranked. A smoke
+  request and all six measured repetitions must pass before the independent
+  Qwen quality run starts. The documented 27B results are never overwritten.
+- [`quality/moe_runner.py`](quality/moe_runner.py) runs matched dense/MoE arms
+  at concurrency 1, 4, and 16, with routing telemetry disabled/enabled where
+  applicable. It saves detailed request results, GPU and vLLM metrics, model
+  metadata, and JSON/CSV Pareto inputs under `moe/<timestamp>/`.
+- [`quality/security/`](quality/security/) implements canonical parsing,
+  public-data anonymization, timestamp replay, all five experiment modes,
+  stateful incident memory, bounded tools, a strict evidence-linked JSON
+  contract, and separate intelligence/operational scorecards for OTRF, LANL,
+  OpTC, and unseen cyber-range tracks.
+
+No new full GPU campaign has been claimed by these runners yet. Generated
+reports remain `partial` until their campaign-specific requirements pass.
 
 ## How the benchmark works
 
@@ -105,7 +144,7 @@ total parameters, dispatch overhead, and quality/cost trade-offs, see the
 separate from both the synthetic performance campaign and this reference-based
 quality score.
 
-## Future evaluation plans
+## Evaluation roadmap and implementation status
 
 The Qwen3.6 follow-up is now partially complete. The next planned model evaluations are the [Unsloth Qwen3.6-27B-NVFP4
 checkpoint](https://huggingface.co/unsloth/Qwen3.6-27B-NVFP4) and [Unsloth
@@ -114,8 +153,9 @@ The 27B performance result is recorded above; the 35B checkpoint requires a
 future vLLM/backend combination that supports its quantization scheme before
 the quality campaign can run.
 
-The planned [Security LLM real-time reasoning benchmark](quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md)
-will extend this work to OTRF, LANL, and DARPA OpTC telemetry, measuring
+The [Security LLM real-time reasoning benchmark](quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md)
+now has an executable foundation under `quality/security/`. Dataset acquisition
+and full public/unseen campaigns remain to be run. It measures
 cross-source correlation, time-to-detect, attack reconstruction, prediction,
 evidence grounding, prompt-injection resistance, and prevention windows.
 
@@ -135,17 +175,31 @@ evidence grounding, prompt-injection resistance, and prevention windows.
 - [`quality/`](quality/): versioned quality dataset, manifest, resumable runner,
   evaluator, tests, audit outputs, and a separate quality report.
 - [`quality/MOE_EVALUATION_PLAN.md`](quality/MOE_EVALUATION_PLAN.md): planned
-  controlled MoE impact measurements and acceptance criteria.
+  controlled MoE impact measurements and acceptance criteria; the runner is
+  `quality/moe_runner.py`.
 - [`quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md`](quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md):
   future security telemetry reasoning benchmark design.
 - [`scripts/collect_quality_results.sh`](scripts/collect_quality_results.sh):
   collects the independent quality artifacts without mixing them into a
   timestamped performance campaign.
+- [`scripts/verify_campaign.py`](scripts/verify_campaign.py): verifies terminal
+  status and every collected artifact hash.
+- [`scripts/stop_runpod_after_verify.sh`](scripts/stop_runpod_after_verify.sh):
+  authenticated, explicitly authorized Pod stop after local verification. It
+  preserves the persistent volume.
 
-The helper scripts deliberately do not create or terminate Pods. For example:
+The provisioning and collection helpers deliberately do not create or
+terminate Pods. For example:
 
 ```bash
 ssh root@HOST -p PORT -i ~/.ssh/id_ed25519 < scripts/remote_preflight.sh
 ssh root@HOST -p PORT -i ~/.ssh/id_ed25519 < scripts/remote_setup.sh
 scripts/collect_results.sh root@HOST PORT results/20260808T-final ~/.ssh/id_ed25519
+```
+
+The sole shutdown helper requires an exact Pod ID, an explicit authorization
+flag, an exported `RUNPOD_API_KEY`, and one or more verified campaign roots:
+
+```bash
+scripts/stop_runpod_after_verify.sh --authorized POD_ID collected/qwen36_UTC
 ```

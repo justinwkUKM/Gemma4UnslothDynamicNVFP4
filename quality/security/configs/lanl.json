@@ -1,0 +1,15 @@
+{
+  "dataset": "lanl",
+  "track": "public",
+  "field_map": {
+    "event_id": "event_id",
+    "timestamp": "timestamp",
+    "source_type": "source_type",
+    "entity_id": "computer",
+    "action": "event_type",
+    "outcome": "status"
+  },
+  "labels_must_be_separate": true,
+  "anonymization_required": true,
+  "long_stream": true
+}

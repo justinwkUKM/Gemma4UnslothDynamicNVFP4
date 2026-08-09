@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import re
 import statistics
 import sys
@@ -393,10 +394,18 @@ def _fmt(value: Any, percent: bool = False) -> str:
     return f"{float(value):.4f}"
 
 
-def write_report(scores: list[dict[str, Any]], report_path: Path, complete: bool, manifest: dict[str, Any]) -> None:
+def write_report(
+    scores: list[dict[str, Any]],
+    report_path: Path,
+    complete: bool,
+    manifest: dict[str, Any],
+    *,
+    results_dir: Path = DEFAULT_RESULTS,
+    campaign_title: str = "Gemma 4 quality and factuality report",
+) -> None:
     categories = list(manifest["category_counts"])
     lines = [
-        "# Gemma 4 quality and factuality report\n\n",
+        f"# {campaign_title}\n\n",
         f"Generated: {utc_now()}  \n",
         f"Dataset: `{manifest['dataset_version']}` (`{manifest['dataset_sha256']}`)  \n",
         f"Campaign status: **{'complete' if complete else 'partial'}**\n\n",
@@ -414,7 +423,7 @@ def write_report(scores: list[dict[str, Any]], report_path: Path, complete: bool
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |\n",
     ])
     for score in scores:
-        raw_link = f"../results/{score['model_id']}/raw.jsonl"
+        raw_link = Path(os.path.relpath(results_dir / score["model_id"] / "raw.jsonl", report_path.parent)).as_posix()
         cost = score["cost_per_evaluated_prompt_usd"]
         lines.append(
             f"| {score['model_id']} | {_fmt(score['exact_match_accuracy'], True)} | "
@@ -428,7 +437,7 @@ def write_report(scores: list[dict[str, Any]], report_path: Path, complete: bool
         "| --- | --- | ---: | ---: | ---: | --- |\n",
     ])
     for score in scores:
-        run_path = report_path.parent.parent / "results" / score["model_id"] / "run.json"
+        run_path = results_dir / score["model_id"] / "run.json"
         run = json.loads(run_path.read_text(encoding="utf-8")) if run_path.exists() else {}
         lines.append(
             f"| {score['model_id']} | `{run.get('model_revision', 'n/a')}` | "
@@ -457,6 +466,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--models", nargs="+", default=list(EXPECTED_MODELS))
     parser.add_argument("--allow-partial", action="store_true", help="write a report without all three models")
     parser.add_argument("--validate-only", action="store_true")
+    parser.add_argument("--campaign-title", default="Gemma 4 quality and factuality report")
     return parser
 
 
@@ -493,7 +503,14 @@ def main(argv: list[str] | None = None) -> int:
         hashes = {value for score in scores for value in score["generation_settings_hashes"]}
         if len(hashes) > 1:
             raise ValidationError(f"models used different generation setting hashes: {sorted(hashes)}")
-        write_report(scores, args.report, not missing, manifest)
+        write_report(
+            scores,
+            args.report,
+            not missing,
+            manifest,
+            results_dir=args.results_dir,
+            campaign_title=args.campaign_title,
+        )
         print(json.dumps({"models": available, "missing": missing, "report": str(args.report)}, indent=2))
         return 0
     except (OSError, json.JSONDecodeError, ValidationError) as exc:

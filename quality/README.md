@@ -1,10 +1,14 @@
-# Gemma 4 quality and factuality campaign
+# Model quality, MoE efficiency, and security reasoning campaigns
 
 This tree is independent of the synthetic performance campaign in
 `benchmarks/`. It sends the same 100 curated prompts to all three checkpoints,
 uses deterministic decoding, and applies reference-based scoring. Quality
 scores do not measure latency or throughput and cannot be compared with those
 metrics.
+
+Before any GPU is started, run `../scripts/test_all.sh`. The command includes
+the original evaluator/runner tests plus Qwen backend gating, common campaign
+provenance, MoE normalization, and security parser/replay/contract tests.
 
 ## Fixed campaign contract
 
@@ -115,6 +119,37 @@ Qwen3.6-35B-A3B-NVFP4](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4)
 with both the repository's performance workload and this same 100-prompt
 quality suite. They will be separately recorded campaigns with independent
 performance and quality reports.
+
+The executable Qwen workflow is now `../benchmarks/qwen36_runner.py`. Qwen
+quality inference requires `--compatibility-gate`; a configured backend name by
+itself is not accepted. Qwen artifacts are written to `results-qwen36/` and
+`summary/qwen36-quality-report.md`, leaving the completed Gemma results intact.
+
+## MoE efficiency campaign
+
+`moe_runner.py` implements `MOE_EVALUATION_PLAN.md` as a separately budgeted
+matrix. The committed configuration fixes a 4,096-token context, seed 0,
+matched 512-input/256-output workloads, three repetitions, and concurrency
+levels 1/4/16. The MoE arm additionally restarts the same checkpoint with
+routing capture enabled. Run-time-unavailable routing/dispatch fields are
+reported as `null`, never estimated from throughput.
+
+```bash
+python3 quality/moe_runner.py --root /workspace/moe/UTC
+```
+
+Each campaign contains model metadata, detailed raw request results, server
+logs, GPU samples, Prometheus snapshots, `summary/moe-summary.json`, CSV, and
+`summary/moe-report.md`. Existing quality scores are read only for
+output-equivalence normalization and are not folded into speed.
+
+## Security reasoning campaign
+
+The incremental harness is under [`security/`](security/). It supports the
+required raw, fixed-window, triggered, stateful-memory, and bounded tool-using
+modes. Public inputs must be anonymized and label-free; fresh cyber-range runs
+use the separate `unseen` track. Ground truth is supplied only to the evaluator
+after inference. See [`security/README.md`](security/README.md) for commands.
 
 The broader future security telemetry track is described in
 [`SECURITY_LLM_REASONING_BENCHMARK_PLAN.md`](SECURITY_LLM_REASONING_BENCHMARK_PLAN.md).

@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "campaign": "moe-efficiency",
+  "models": {
+    "gemma-4-E4B-it-NVFP4": {
+      "checkpoint": "unsloth/gemma-4-E4B-it-NVFP4",
+      "architecture": "dense",
+      "total_parameters_billions": 4.0,
+      "active_parameters_billions": 4.0,
+      "parameter_source": "checkpoint model family identifier"
+    },
+    "gemma-4-12b-it-NVFP4": {
+      "checkpoint": "unsloth/gemma-4-12b-it-NVFP4",
+      "architecture": "dense",
+      "total_parameters_billions": 12.0,
+      "active_parameters_billions": 12.0,
+      "parameter_source": "checkpoint model family identifier"
+    },
+    "gemma-4-26B-A4B-it-NVFP4": {
+      "checkpoint": "unsloth/gemma-4-26B-A4B-it-NVFP4",
+      "architecture": "moe",
+      "total_parameters_billions": 26.0,
+      "active_parameters_billions": 4.0,
+      "parameter_source": "checkpoint model family identifier"
+    }
+  },
+  "server": {
+    "context_limit": 4096,
+    "max_num_seqs": 16,
+    "gpu_memory_utilization": 0.9,
+    "seed": 0,
+    "backend": "flashinfer_cutlass"
+  },
+  "workload": {
+    "input_tokens": 512,
+    "output_tokens": 256,
+    "requests": 32,
+    "concurrency_levels": [1, 4, 16],
+    "repetitions": 3
+  },
+  "routing_telemetry_arms": [false, true]
+}
