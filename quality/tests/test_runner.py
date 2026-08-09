@@ -10,6 +10,14 @@ import runner
 
 
 class RunnerPersistenceTests(unittest.TestCase):
+    def test_default_quality_models_exclude_qwen(self):
+        self.assertEqual(set(runner.DEFAULT_MODELS), {
+            "gemma-4-E4B-it-NVFP4",
+            "gemma-4-12b-it-NVFP4",
+            "gemma-4-26B-A4B-it-NVFP4",
+        })
+        self.assertFalse(any(model.startswith("qwen") for model in runner.DEFAULT_MODELS))
+
     def test_atomic_jsonl_preserves_order_and_partial_records(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "raw.jsonl"

@@ -40,6 +40,11 @@ MODELS = {
     "qwen3.6-27B-NVFP4": "unsloth/Qwen3.6-27B-NVFP4",
     "qwen3.6-35B-A3B-NVFP4": "unsloth/Qwen3.6-35B-A3B-NVFP4",
 }
+DEFAULT_MODELS = (
+    "gemma-4-E4B-it-NVFP4",
+    "gemma-4-12b-it-NVFP4",
+    "gemma-4-26B-A4B-it-NVFP4",
+)
 
 
 def utc_now() -> str:
@@ -454,7 +459,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS)
-    parser.add_argument("--models", nargs="+", choices=tuple(MODELS), default=list(MODELS))
+    parser.add_argument("--models", nargs="+", choices=tuple(MODELS), default=list(DEFAULT_MODELS))
     parser.add_argument("--prompt-id", action="append", default=[], help="run only this prompt ID; repeatable")
     parser.add_argument("--limit", type=int, help="run the first N selected prompts for a smoke test")
     parser.add_argument("--seed", type=int, default=0)

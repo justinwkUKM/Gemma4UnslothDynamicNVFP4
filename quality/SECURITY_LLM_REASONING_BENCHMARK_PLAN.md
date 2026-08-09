@@ -5,6 +5,9 @@ foundation is in [`security/`](security/); dataset acquisition and full public
 plus unseen campaigns remain outstanding. It is not part of the
 completed Gemma quality score or synthetic serving benchmark.
 
+Qwen3.6 35B is skipped. The active model matrix is Gemma 4 E4B, 12B, and 26B
+A4B, run as separate campaigns with identical telemetry and settings.
+
 ## Research question
 
 Can locally deployable 26–35B models act as a real-time reasoning layer above
@@ -187,7 +190,7 @@ concurrency, context efficiency, and cost per incident.
 9. Validate the winning architecture on unseen cyber-range telemetry.
 
 The first implementation should be: **OTRF → 10 attack scenarios → timestamp
-replay → stateful 30-second correlation → three local 26–35B models → structured
+replay → stateful 30-second correlation → three Gemma 4 models → structured
 JSON → automated scoring**, followed by LANL and OpTC evaluation.
 
 ## References

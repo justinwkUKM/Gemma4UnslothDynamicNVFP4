@@ -111,19 +111,13 @@ The separate MoE routing/efficiency follow-up is scoped in
 [`MOE_EVALUATION_PLAN.md`](MOE_EVALUATION_PLAN.md); it is intentionally not a
 quality score or part of this campaign.
 
-## Future model coverage
+## Active model coverage
 
-The next planned cross-model run will evaluate the [Unsloth Qwen3.6-27B-NVFP4
-checkpoint](https://huggingface.co/unsloth/Qwen3.6-27B-NVFP4) and [Unsloth
-Qwen3.6-35B-A3B-NVFP4](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4)
-with both the repository's performance workload and this same 100-prompt
-quality suite. They will be separately recorded campaigns with independent
-performance and quality reports.
-
-The executable Qwen workflow is now `../benchmarks/qwen36_runner.py`. Qwen
-quality inference requires `--compatibility-gate`; a configured backend name by
-itself is not accepted. Qwen artifacts are written to `results-qwen36/` and
-`summary/qwen36-quality-report.md`, leaving the completed Gemma results intact.
+Qwen3.6 35B is explicitly skipped. Its compatibility runner remains available
+for auditability but has no default model target. The active MoE and security
+matrix uses the three Gemma 4 checkpoints: E4B, 12B, and 26B A4B. The generic
+quality runner also defaults only to those Gemma models, preventing accidental
+Qwen inclusion.
 
 ## MoE efficiency campaign
 

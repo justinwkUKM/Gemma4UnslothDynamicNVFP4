@@ -27,9 +27,10 @@ class QwenBackendGateTests(unittest.TestCase):
         self.assertEqual(verdict["status"], "fallback_rejected")
         self.assertFalse(verdict["rank_eligible"])
 
-    def test_default_model_is_only_missing_35b(self):
+    def test_qwen_35b_is_skipped_by_default(self):
         config = qwen36_runner.load_config()
-        self.assertEqual(qwen36_runner.selected_models(config, None), ["qwen3.6-35B-A3B-NVFP4"])
+        self.assertEqual(qwen36_runner.selected_models(config, None), [])
+        self.assertEqual(config["models"]["qwen3.6-35B-A3B-NVFP4"]["historical_status"], "skipped_by_user")
 
 
 if __name__ == "__main__":

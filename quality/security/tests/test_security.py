@@ -8,7 +8,7 @@ from quality.security.contract import ContractError, validate_analysis
 from quality.security.evaluator import evaluate
 from quality.security.parser import CanonicalTelemetryParser, anonymize_public_events
 from quality.security.replay import ReplayEngine
-from quality.security.runner import assert_inference_safe
+from quality.security.runner import SECURITY_MODELS, assert_inference_safe
 from quality.security.prepare import remap_truth_ids
 
 
@@ -63,6 +63,14 @@ class SecurityHarnessTests(unittest.TestCase):
         values = [event("E1", action="routine heartbeat"), event("E2", action="PowerShell encoded command")]
         jobs = build_investigations(values, mode="triggered", window_seconds=30)
         self.assertEqual(jobs[0]["event_ids"], ["E2"])
+
+    def test_security_matrix_contains_only_gemma_4_models(self):
+        self.assertEqual(set(SECURITY_MODELS), {
+            "gemma-4-E4B-it-NVFP4",
+            "gemma-4-12b-it-NVFP4",
+            "gemma-4-26B-A4B-it-NVFP4",
+        })
+        self.assertTrue(all("gemma-4" in checkpoint.lower() for checkpoint in SECURITY_MODELS.values()))
 
     def test_contract_rejects_invented_evidence(self):
         verdict = validate_analysis(analysis(), {"E1"})

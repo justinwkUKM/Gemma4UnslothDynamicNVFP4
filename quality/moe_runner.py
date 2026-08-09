@@ -267,11 +267,18 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     temporary.replace(path)
 
 
-def write_report(path: Path, status: str, rows: list[dict[str, Any]], failures: list[dict[str, Any]]) -> None:
+def write_report(
+    path: Path,
+    status: str,
+    rows: list[dict[str, Any]],
+    failures: list[dict[str, Any]],
+    comparison_scope: str,
+) -> None:
     lines = [
         "# MoE efficiency report\n\n",
         f"Generated: {utc_now()}  \n",
         f"Campaign status: **{status}**\n\n",
+        f"Comparison scope: **{comparison_scope}**.\n\n",
         "> Efficiency and output-equivalence quality are reported independently. All table values link through `raw_record_ids` in `moe-summary.json` to normalized and raw measurements.\n\n",
         "| Model | Type | Routing telemetry | Concurrency | Reps | Output tok/s | TTFT ms | TPOT ms | Quality | Tok/$ |\n",
         "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n",
@@ -312,10 +319,15 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
-    model_ids = args.models or list(config["models"])
+    model_ids = args.models or [
+        model_id for model_id, entry in config["models"].items() if entry.get("run_by_default")
+    ]
     unknown = set(model_ids) - set(config["models"])
     if unknown or args.hourly_rate <= 0 or args.max_campaign_seconds <= 0:
         print("error: invalid models or budget", file=sys.stderr)
+        return 2
+    if not model_ids:
+        print("error: MoE config has no default model", file=sys.stderr)
         return 2
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     args.root = args.root or REPO_ROOT / "moe" / timestamp
@@ -349,6 +361,10 @@ def main(argv: list[str] | None = None) -> int:
         deadline_utc=(datetime.now(timezone.utc) + timedelta(seconds=args.max_campaign_seconds)).isoformat(),
         hourly_rate_usd=args.hourly_rate,
         config_hash=sha256_file(args.config),
+        extra={
+            "comparison_scope": config.get("comparison_scope"),
+            "dense_baseline_required": config.get("dense_baseline_required", True),
+        },
     )
     records: list[dict[str, Any]] = []
     failures: list[dict[str, Any]] = []
@@ -461,9 +477,26 @@ def main(argv: list[str] | None = None) -> int:
         model_id: value.get("model_revision") or "unresolved"
         for model_id, value in metadata.items()
     }
-    complete = len(records) == expected_records and all(row["status"] == "success" for row in records) and not failures and metadata_complete
+    architectures = {config["models"][model]["architecture"] for model in model_ids}
+    comparison_coverage = (
+        not config.get("dense_baseline_required", True)
+        or {"dense", "moe"} <= architectures
+    )
+    complete = (
+        len(records) == expected_records
+        and all(row["status"] == "success" for row in records)
+        and not failures
+        and metadata_complete
+        and comparison_coverage
+    )
     status = "complete" if complete else "partial"
-    write_report(args.root / "summary" / "moe-report.md", status, summaries, failures)
+    write_report(
+        args.root / "summary" / "moe-report.md",
+        status,
+        summaries,
+        failures,
+        config.get("comparison_scope", "unspecified"),
+    )
     manifest.finish(
         status,
         requirements={
@@ -472,6 +505,7 @@ def main(argv: list[str] | None = None) -> int:
             "no_hidden_fallback": not any(item.get("classification") == "kernel_selection" for item in failures),
             "raw_links_present": all(bool(row["raw_record_ids"]) for row in summaries),
             "model_metadata_complete": metadata_complete,
+            "dense_and_moe_coverage": comparison_coverage,
         },
         artifact_root=args.root,
     )

@@ -440,6 +440,9 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
+    if not model_ids:
+        print("error: Qwen3.6 35B is skipped; pass --models explicitly only to override that decision", file=sys.stderr)
+        return 2
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     args.root = args.root or REPO_ROOT / "benchmarks" / f"qwen36_{timestamp}"
     args.root.mkdir(parents=True, exist_ok=True)

@@ -8,6 +8,13 @@ class MoeRunnerTests(unittest.TestCase):
         config = moe_runner.load_config()
         total = config["workload"]["input_tokens"] + config["workload"]["output_tokens"]
         self.assertLessEqual(total, config["server"]["context_limit"])
+        defaults = [model for model, value in config["models"].items() if value.get("run_by_default")]
+        self.assertEqual(defaults, [
+            "gemma-4-E4B-it-NVFP4",
+            "gemma-4-12b-it-NVFP4",
+            "gemma-4-26B-A4B-it-NVFP4",
+        ])
+        self.assertTrue(config["dense_baseline_required"])
 
     def test_parameter_normalization_keeps_active_and_total_separate(self):
         metadata = {

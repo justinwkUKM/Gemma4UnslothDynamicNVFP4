@@ -5,6 +5,10 @@ is [`moe_runner.py`](moe_runner.py), with fixed defaults in
 [`moe_config.json`](moe_config.json). It must not alter the
 100-prompt quality campaign or the existing synthetic benchmark rankings.
 
+Qwen3.6 35B is skipped. The active matrix uses the three Gemma 4 checkpoints:
+E4B and 12B as dense baselines, plus 26B A4B for MoE routing/concurrency
+characterization.
+
 ## Questions
 
 1. How much quality is obtained per active parameter and per dollar?

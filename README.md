@@ -37,9 +37,10 @@ identity settings.
 
 ## New campaign runners
 
-- [`benchmarks/qwen36_runner.py`](benchmarks/qwen36_runner.py) defaults only to
-  the missing Qwen3.6 35B work. It probes `flashinfer_cutedsl`,
-  `flashinfer_trtllm`, then `cutlass`, records every outcome, and requires an
+- [`benchmarks/qwen36_runner.py`](benchmarks/qwen36_runner.py) preserves the
+  Qwen compatibility workflow, but Qwen3.6 35B is skipped and has no default
+  run target. An explicit override would probe `flashinfer_cutedsl`,
+  `flashinfer_trtllm`, then `cutlass`, record every outcome, and require an
   explicit vLLM backend-selection line before any score can be ranked. A smoke
   request and all six measured repetitions must pass before the independent
   Qwen quality run starts. The documented 27B results are never overwritten.
@@ -146,12 +147,9 @@ quality score.
 
 ## Evaluation roadmap and implementation status
 
-The Qwen3.6 follow-up is now partially complete. The next planned model evaluations are the [Unsloth Qwen3.6-27B-NVFP4
-checkpoint](https://huggingface.co/unsloth/Qwen3.6-27B-NVFP4) and [Unsloth
-Qwen3.6-35B-A3B-NVFP4](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4).
-The 27B performance result is recorded above; the 35B checkpoint requires a
-future vLLM/backend combination that supports its quantization scheme before
-the quality campaign can run.
+The Qwen3.6 follow-up is closed as partial. The 27B performance result remains
+recorded above, while Qwen3.6 35B is explicitly skipped. The active future
+campaigns use the three Gemma 4 checkpoints: E4B, 12B, and 26B A4B.
 
 The [Security LLM real-time reasoning benchmark](quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md)
 now has an executable foundation under `quality/security/`. Dataset acquisition
@@ -201,5 +199,5 @@ The sole shutdown helper requires an exact Pod ID, an explicit authorization
 flag, an exported `RUNPOD_API_KEY`, and one or more verified campaign roots:
 
 ```bash
-scripts/stop_runpod_after_verify.sh --authorized POD_ID collected/qwen36_UTC
+scripts/stop_runpod_after_verify.sh --authorized POD_ID collected/campaign_UTC
 ```

@@ -15,6 +15,9 @@ The implementation provides:
 - resumable streaming inference with failed-request-only retries;
 - separate Security Intelligence and Operational scorecards.
 
+The active matrix contains only Gemma 4 E4B, 12B, and 26B A4B. Run one
+model-specific result tree at a time; Qwen3.6 35B is skipped.
+
 Ground-truth JSON is consumed only by `evaluator.py`, never `runner.py`. A
 public-data campaign is not the unseen final track: publish both a reproducible
 public campaign and a separately generated `--track unseen` cyber-range
@@ -41,7 +44,8 @@ Generate contexts without using a model or GPU:
 python3 -m quality.security.runner \
   --events canonical-anonymized.jsonl --results-dir security/smoke \
   --dataset-version otrf-snapshot-SHA --scenario-id scenario-01 \
-  --track public --model local-model --mode triggered --dry-run
+  --track public --model unsloth/gemma-4-E4B-it-NVFP4 \
+  --mode triggered --dry-run
 ```
 
 Run inference only after local tests pass, then evaluate using a separate label

@@ -358,12 +358,10 @@ separate follow-up design for routing telemetry and active-parameter efficiency
 is recorded in `quality/MOE_EVALUATION_PLAN.md` and was not mixed into this
 campaign.
 
-The next planned model coverage includes the [Unsloth Qwen3.6-27B-NVFP4
-checkpoint](https://huggingface.co/unsloth/Qwen3.6-27B-NVFP4) and [Unsloth
-Qwen3.6-35B-A3B-NVFP4](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4).
-Run each as a separately budgeted campaign using the existing performance
-workloads and the same 100-prompt quality suite; publish independent reports
-and do not combine quality scores with throughput rankings.
+The Qwen3.6 27B follow-up is preserved as a historical partial campaign, and
+Qwen3.6 35B is skipped. Active future model work stays on the three Gemma 4
+checkpoints (E4B, 12B, and 26B A4B), using separately budgeted MoE and security
+campaigns. Quality scores and throughput rankings remain independent.
 
 A separate future track for a Security LLM real-time reasoning benchmark is
 specified in `quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md`. It will use
@@ -482,8 +480,9 @@ own server log and startup GPU telemetry. A healthy endpoint is insufficient:
 the log must explicitly confirm that vLLM selected the requested backend. CPU
 offload, Marlin, Triton, emulation, OOM, unsupported quantization, and
 unconfirmed selection are preserved as non-rankable compatibility outcomes.
-Only the missing 35B checkpoint runs by default; historical 27B artifacts and
-reported numbers remain unchanged.
+Qwen3.6 35B is skipped and the Qwen runner has no default model target;
+historical 27B artifacts and reported numbers remain unchanged. The active MoE
+and security campaign matrix uses Gemma 4 E4B, 12B, and 26B A4B.
 
 Every campaign manifest records dataset/model versions, backend, context limit,
 seed, prompt hash, environment hash, GPU type, UTC start/deadline, hourly rate,

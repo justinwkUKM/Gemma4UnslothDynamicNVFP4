@@ -36,6 +36,11 @@ from quality.security.state import IncidentState, InvestigationTools  # noqa: E4
 
 
 LABEL_KEYS = {"label", "labels", "ground_truth", "attack", "attack_name", "malicious", "is_malicious"}
+SECURITY_MODELS = {
+    "gemma-4-E4B-it-NVFP4": "unsloth/gemma-4-E4B-it-NVFP4",
+    "gemma-4-12b-it-NVFP4": "unsloth/gemma-4-12b-it-NVFP4",
+    "gemma-4-26B-A4B-it-NVFP4": "unsloth/gemma-4-26B-A4B-it-NVFP4",
+}
 
 
 def assert_inference_safe(events: list[dict[str, Any]], *, track: str) -> None:
@@ -214,7 +219,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--mode", choices=MODES, action="append", dest="modes")
     parser.add_argument("--window-seconds", type=float, default=30)
     parser.add_argument("--replay-speed", type=float, default=1)
-    parser.add_argument("--model", required=True)
+    parser.add_argument("--model", choices=tuple(SECURITY_MODELS.values()), required=True)
     parser.add_argument("--model-revision", default="unresolved")
     parser.add_argument("--base-url", default="http://127.0.0.1:8000")
     parser.add_argument("--context-limit", type=int, default=4096)
