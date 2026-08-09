@@ -99,6 +99,11 @@ quality campaign under the same controlled settings, with separate reports so
 Qwen results can be compared against Gemma without mixing throughput and
 quality metrics.
 
+The planned [Security LLM real-time reasoning benchmark](quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md)
+will extend this work to OTRF, LANL, and DARPA OpTC telemetry, measuring
+cross-source correlation, time-to-detect, attack reconstruction, prediction,
+evidence grounding, prompt-injection resistance, and prevention windows.
+
 ## Repository contents
 
 - [`RUNPOD_GEMMA_BENCHMARK_SPEC.md`](RUNPOD_GEMMA_BENCHMARK_SPEC.md): complete
@@ -116,6 +121,8 @@ quality metrics.
   evaluator, tests, audit outputs, and a separate quality report.
 - [`quality/MOE_EVALUATION_PLAN.md`](quality/MOE_EVALUATION_PLAN.md): planned
   controlled MoE impact measurements and acceptance criteria.
+- [`quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md`](quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md):
+  future security telemetry reasoning benchmark design.
 - [`scripts/collect_quality_results.sh`](scripts/collect_quality_results.sh):
   collects the independent quality artifacts without mixing them into a
   timestamped performance campaign.

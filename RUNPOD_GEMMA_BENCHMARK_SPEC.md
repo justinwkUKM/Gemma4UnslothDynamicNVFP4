@@ -365,6 +365,12 @@ Run each as a separately budgeted campaign using the existing performance
 workloads and the same 100-prompt quality suite; publish independent reports
 and do not combine quality scores with throughput rankings.
 
+A separate future track for a Security LLM real-time reasoning benchmark is
+specified in `quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md`. It will use
+public OTRF, LANL, and DARPA OpTC telemetry plus unseen cyber-range data to
+measure correlation, time-to-detect, attack reconstruction, prediction,
+grounding, prompt-injection resistance, and prevention windows.
+
 ## 11. Execution record for the current campaign
 
 This section is an append-only operational record for the campaign started on

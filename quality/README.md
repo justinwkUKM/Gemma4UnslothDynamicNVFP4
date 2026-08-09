@@ -115,3 +115,8 @@ Qwen3.6-35B-A3B-NVFP4](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4)
 with both the repository's performance workload and this same 100-prompt
 quality suite. They will be separately recorded campaigns with independent
 performance and quality reports.
+
+The broader future security telemetry track is described in
+[`SECURITY_LLM_REASONING_BENCHMARK_PLAN.md`](SECURITY_LLM_REASONING_BENCHMARK_PLAN.md).
+It will evaluate stateful real-time reasoning over OTRF, LANL, and DARPA OpTC
+data, separately measuring intelligence and operational performance.
