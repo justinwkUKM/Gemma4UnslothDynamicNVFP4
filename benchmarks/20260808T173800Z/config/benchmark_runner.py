@@ -142,9 +142,11 @@ for model_id, checkpoint in MODELS:
     qwen_tuning = (["--max-model-len", "4096", "--max-num-seqs", "16"]
                    if checkpoint.lower().startswith("unsloth/qwen") else
                    ["--max-model-len", "8192"])
+    moe_backend = ("triton" if checkpoint.lower().endswith("35b-a3b-nvfp4")
+                   else "flashinfer_cutlass")
     cmd=[str(VLLM),"serve",checkpoint,"--host","127.0.0.1","--port","8000","--served-model-name",checkpoint,
          *qwen_tuning,"--gpu-memory-utilization","0.90",
-         "--linear-backend","auto","--moe-backend","flashinfer_cutlass","--seed","0"]
+         "--linear-backend","auto","--moe-backend",moe_backend,"--seed","0"]
     if checkpoint.lower().startswith("unsloth/gemma"):
         cmd[cmd.index("--linear-backend"):cmd.index("--linear-backend")] = ["--reasoning-parser", "gemma4"]
     log.parent.mkdir(parents=True,exist_ok=True); lf=log.open("w")
