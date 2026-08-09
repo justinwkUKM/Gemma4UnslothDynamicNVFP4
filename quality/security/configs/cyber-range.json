@@ -1,0 +1,15 @@
+{
+  "dataset": "cyber-range-unseen",
+  "track": "unseen",
+  "field_map": {
+    "event_id": "event_id",
+    "timestamp": "timestamp",
+    "source_type": "source_type",
+    "entity_id": "entity_id",
+    "action": "action",
+    "outcome": "outcome"
+  },
+  "labels_must_be_separate": true,
+  "anonymization_required": false,
+  "fresh_telemetry_required": true
+}

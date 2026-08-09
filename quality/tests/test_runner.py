@@ -1,6 +1,7 @@
 import sys
 import tempfile
 import unittest
+import json
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -9,6 +10,14 @@ import runner
 
 
 class RunnerPersistenceTests(unittest.TestCase):
+    def test_default_quality_models_exclude_qwen(self):
+        self.assertEqual(set(runner.DEFAULT_MODELS), {
+            "gemma-4-E4B-it-NVFP4",
+            "gemma-4-12b-it-NVFP4",
+            "gemma-4-26B-A4B-it-NVFP4",
+        })
+        self.assertFalse(any(model.startswith("qwen") for model in runner.DEFAULT_MODELS))
+
     def test_atomic_jsonl_preserves_order_and_partial_records(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "raw.jsonl"
@@ -28,6 +37,17 @@ class RunnerPersistenceTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(first["temperature"], 0)
         self.assertFalse(first["stream"])
+
+    def test_qwen_gate_requires_matching_rank_eligible_backend(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "compatibility.json"
+            path.write_text(json.dumps({"attempts": [
+                {"backend": "flashinfer_cutedsl", "status": "supported", "rank_eligible": True}
+            ]}))
+            selected = runner.validate_compatibility_gate(path, "flashinfer_cutedsl")
+            self.assertEqual(selected["status"], "supported")
+            with self.assertRaises(ValueError):
+                runner.validate_compatibility_gate(path, "cutlass")
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -25,13 +25,26 @@ try:
 except ImportError:  # Direct execution: python quality/runner.py
     from evaluator import DEFAULT_DATASET, DEFAULT_MANIFEST, DEFAULT_RESULTS, read_jsonl, sha256_file, validate_dataset
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from campaigns.common import CampaignManifest, canonical_sha256  # noqa: E402
+
 
 ROOT = Path(__file__).resolve().parent
 MODELS = {
     "gemma-4-E4B-it-NVFP4": "unsloth/gemma-4-E4B-it-NVFP4",
     "gemma-4-12b-it-NVFP4": "unsloth/gemma-4-12b-it-NVFP4",
     "gemma-4-26B-A4B-it-NVFP4": "unsloth/gemma-4-26B-A4B-it-NVFP4",
+    "qwen3.6-27B-NVFP4": "unsloth/Qwen3.6-27B-NVFP4",
+    "qwen3.6-35B-A3B-NVFP4": "unsloth/Qwen3.6-35B-A3B-NVFP4",
 }
+DEFAULT_MODELS = (
+    "gemma-4-E4B-it-NVFP4",
+    "gemma-4-12b-it-NVFP4",
+    "gemma-4-26B-A4B-it-NVFP4",
+)
 
 
 def utc_now() -> str:
@@ -255,20 +268,43 @@ def evaluate_prompt(
 
 
 def server_command(args: argparse.Namespace, checkpoint: str) -> list[str]:
-    return [
+    command = [
         args.vllm_command,
         "serve",
         checkpoint,
         "--host", args.host,
         "--port", str(args.port),
         "--served-model-name", checkpoint,
-        "--max-model-len", "8192",
+        *( ["--max-model-len", "4096", "--max-num-seqs", "16"]
+           if checkpoint.lower().startswith("unsloth/qwen")
+           else ["--max-model-len", "8192"] ),
         "--gpu-memory-utilization", "0.90",
-        "--reasoning-parser", "gemma4",
         "--linear-backend", "auto",
-        "--moe-backend", "flashinfer_cutlass",
+        "--moe-backend", args.moe_backend,
         "--seed", str(args.seed),
     ]
+    if checkpoint.lower().startswith("unsloth/gemma"):
+        command[command.index("--linear-backend"):command.index("--linear-backend")] = ["--reasoning-parser", "gemma4"]
+    return command
+
+
+def validate_compatibility_gate(path: Path, backend: str) -> dict[str, Any]:
+    """Verify that the performance campaign explicitly approved this backend."""
+
+    value = json.loads(path.read_text(encoding="utf-8"))
+    attempts = value.get("attempts") if isinstance(value, dict) else None
+    if not isinstance(attempts, list):
+        raise ValueError(f"{path}: compatibility gate has no attempts list")
+    matching = [
+        attempt
+        for attempt in attempts
+        if attempt.get("backend") == backend
+        and attempt.get("status") == "supported"
+        and attempt.get("rank_eligible") is True
+    ]
+    if not matching:
+        raise ValueError(f"{path}: backend {backend!r} did not pass the compatibility gate")
+    return matching[-1]
 
 
 def record_model_failure(
@@ -423,7 +459,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--results-dir", type=Path, default=DEFAULT_RESULTS)
-    parser.add_argument("--models", nargs="+", choices=tuple(MODELS), default=list(MODELS))
+    parser.add_argument("--models", nargs="+", choices=tuple(MODELS), default=list(DEFAULT_MODELS))
     parser.add_argument("--prompt-id", action="append", default=[], help="run only this prompt ID; repeatable")
     parser.add_argument("--limit", type=int, help="run the first N selected prompts for a smoke test")
     parser.add_argument("--seed", type=int, default=0)
@@ -439,6 +475,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--base-url", help="OpenAI-compatible server URL (defaults to host and port)")
     parser.add_argument("--external-server", action="store_true", help="use an already running server; requires one model")
     parser.add_argument("--vllm-command", default=os.environ.get("VLLM_COMMAND", "vllm"))
+    parser.add_argument("--moe-backend", default="flashinfer_cutlass")
+    parser.add_argument(
+        "--compatibility-gate",
+        type=Path,
+        help="required Qwen backend-attempt artifact; selected backend must be rank eligible",
+    )
     parser.add_argument("--hf-home", type=Path, default=Path(os.environ.get("HF_HOME", "/workspace/gemma4-benchmark/cache/huggingface")))
     return parser
 
@@ -456,6 +498,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.hourly_rate <= 0 or args.max_campaign_seconds <= 0 or args.max_cost_usd <= 0:
         print("error: hourly rate and campaign budgets must be positive", file=sys.stderr)
         return 2
+    if any(model.startswith("qwen3.6-") for model in args.models) and args.compatibility_gate is None:
+        print("error: Qwen quality runs require --compatibility-gate from the performance campaign", file=sys.stderr)
+        return 2
+    if args.compatibility_gate is not None:
+        try:
+            validate_compatibility_gate(args.compatibility_gate, args.moe_backend)
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 2
     try:
         dataset, manifest = validate_dataset(args.dataset, args.manifest)
     except (OSError, json.JSONDecodeError, ValueError) as exc:
@@ -471,14 +522,68 @@ def main(argv: list[str] | None = None) -> int:
     if args.limit is not None:
         dataset = dataset[: args.limit]
     args.results_dir.mkdir(parents=True, exist_ok=True)
-    environment_dir = ROOT / "environment"
+    environment_dir = args.results_dir / "environment"
     environment_dir.mkdir(parents=True, exist_ok=True)
     environment_file = environment_dir / (datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + ".json")
-    environment_file.write_text(json.dumps(environment_metadata(manifest["dataset_sha256"]), indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    environment_value = environment_metadata(manifest["dataset_sha256"])
+    environment_value["environment_sha256"] = canonical_sha256(environment_value)
+    environment_file.write_text(json.dumps(environment_value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     budget_seconds = min(args.max_campaign_seconds, args.max_cost_usd / args.hourly_rate * 3600)
     args.campaign_deadline = time.monotonic() + budget_seconds
+    gpu_query = environment_value.get("gpu", {}).get("nvidia_smi_query")
+    campaign_path = args.results_dir / "campaign.json"
+    campaign = CampaignManifest.create(
+        campaign_path,
+        campaign_id=f"quality-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}",
+        campaign_type="reference-quality",
+        dataset_versions={manifest["dataset_version"]: manifest["dataset_sha256"]},
+        model_versions={model_id: None for model_id in args.models},
+        backend=args.moe_backend,
+        context_limit=4096 if any(model.startswith("qwen3.6-") for model in args.models) else 8192,
+        seed=args.seed,
+        prompt_hash=canonical_sha256([item["id"] for item in dataset]),
+        environment_hash=environment_value["environment_sha256"],
+        gpu_type=str(gpu_query).split(",", 1)[0] if gpu_query else None,
+        started_at_utc=utc_now(),
+        deadline_utc=(datetime.now(timezone.utc) + timedelta(seconds=budget_seconds)).isoformat(),
+        hourly_rate_usd=args.hourly_rate,
+        config_hash=canonical_sha256(
+            {
+                "models": args.models,
+                "generation": generation_settings(args),
+                "backend": args.moe_backend,
+                "prompt_ids": [item["id"] for item in dataset],
+            }
+        ),
+        extra={"compatibility_gate": str(args.compatibility_gate) if args.compatibility_gate else None},
+    )
     for model_id in args.models:
         run_model(model_id, MODELS[model_id], dataset, manifest, environment_file, args)
+    expected_ids = {item["id"] for item in dataset}
+    requests_complete = True
+    model_versions: dict[str, str | None] = {}
+    for model_id in args.models:
+        raw_path = args.results_dir / model_id / "raw.jsonl"
+        run_path = args.results_dir / model_id / "run.json"
+        run_value = json.loads(run_path.read_text(encoding="utf-8")) if run_path.exists() else {}
+        model_versions[model_id] = run_value.get("model_revision")
+        if not raw_path.exists():
+            requests_complete = False
+            continue
+        records = read_jsonl(raw_path)
+        requests_complete = requests_complete and {row.get("prompt_id") for row in records} == expected_ids
+        requests_complete = requests_complete and all(row.get("status") == "success" for row in records)
+    revisions_resolved = all(model_versions.values())
+    complete = requests_complete and revisions_resolved
+    campaign.data["model_versions"] = model_versions
+    campaign.finish(
+        "complete" if complete else "partial",
+        requirements={
+            "all_prompt_ids_and_requests": requests_complete,
+            "model_revisions_resolved": revisions_resolved,
+        },
+        artifact_root=args.results_dir,
+    )
     print(json.dumps({"models": args.models, "prompt_ids": [item["id"] for item in dataset], "results_dir": str(args.results_dir)}, indent=2))
     return 0
 

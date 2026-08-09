@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "dataset_doi": "10.57745/UXCWOC",
+  "version": 1,
+  "metadata_api": "https://entrepot.recherche.data.gouv.fr/api/datasets/:persistentId/?persistentId=doi:10.57745/UXCWOC",
+  "total_archive_bytes": 939321856000,
+  "archives": [
+    {"name": "2019-09-16.tar", "datafile_id": 713542, "bytes": 13437603840, "md5": "a089930bff20523f654d007fd39e4a26", "persistent_id": "doi:10.57745/EG2WAI"},
+    {"name": "2019-09-17.tar", "datafile_id": 713556, "bytes": 93591838720, "md5": "e5f060fcd9cbc23ad4b1f8372d5d4770", "persistent_id": "doi:10.57745/LS5EKZ"},
+    {"name": "2019-09-18.tar", "datafile_id": 713566, "bytes": 69664460800, "md5": "7297f3c560b532b3b54394039317ee38", "persistent_id": "doi:10.57745/E5C3H6"},
+    {"name": "2019-09-19.tar", "datafile_id": 713570, "bytes": 124590602240, "md5": "4c903ce91b0957a3b93b9bb20f7f358a", "persistent_id": "doi:10.57745/YOU7U5"},
+    {"name": "2019-09-20.tar", "datafile_id": 713571, "bytes": 89917859840, "md5": "e1093a0626cc7607d934e26ecbb10330", "persistent_id": "doi:10.57745/CSQGOH"},
+    {"name": "2019-09-21.tar", "datafile_id": 713572, "bytes": 123844270080, "md5": "8574319d053047f7ff829a0a5d9c4367", "persistent_id": "doi:10.57745/OFJJMW"},
+    {"name": "2019-09-22.tar", "datafile_id": 713573, "bytes": 124306227200, "md5": "c691a26310e0105519c72517f1aa2dcb", "persistent_id": "doi:10.57745/0D2RNJ"},
+    {"name": "2019-09-23.tar", "datafile_id": 713574, "bytes": 120309340160, "md5": "271ffe6271b74a16366c64c4994e3d9e", "persistent_id": "doi:10.57745/9LTJMR"},
+    {"name": "2019-09-24.tar", "datafile_id": 713575, "bytes": 111941212160, "md5": "f490f9ca21bf17e8c917d823d7e4271d", "persistent_id": "doi:10.57745/KFNPJ7"},
+    {"name": "2019-09-25.tar", "datafile_id": 713576, "bytes": 67718440960, "md5": "f92af2a8236f0b53f29b6f213f130cf4", "persistent_id": "doi:10.57745/DNWHUD"}
+  ]
+}

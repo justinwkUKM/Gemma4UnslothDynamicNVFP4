@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "data_root": "security-data",
+  "sources": {
+    "otrf": {
+      "repository": "https://github.com/OTRF/Security-Datasets.git",
+      "revision": "d9d40ef123d2c87d5d3df28c96bcab4f0faccc87",
+      "local_path": "sources/otrf",
+      "access": "public_git",
+      "license_file": "LICENSE",
+      "license_note": "The pinned LICENSE file is MIT; the same revision's README has a stale GPL-3.0 heading. Preserve both in provenance."
+    },
+    "lanl": {
+      "landing_page": "https://csr.lanl.gov/data/cyber1/",
+      "doi": "10.17021/1179829",
+      "local_path": "raw/lanl",
+      "access": "manual_form_required",
+      "compressed_size_approx_bytes": 12884901888,
+      "required_files": [
+        "auth.txt.gz",
+        "proc.txt.gz",
+        "flows.txt.gz",
+        "dns.txt.gz",
+        "redteam.txt.gz"
+      ],
+      "license_note": "LANL waives copyright and related or neighboring rights to the extent possible under law."
+    },
+    "optc": {
+      "documentation_repository": "https://github.com/FiveDirections/OpTC-data.git",
+      "documentation_revision": "5b108604f11f767aa11ea79ff827595f3fad15fd",
+      "documentation_local_path": "sources/optc-docs",
+      "corrected_dataset_doi": "10.57745/UXCWOC",
+      "corrected_dataset_page": "https://entrepot.recherche.data.gouv.fr/dataset.xhtml?persistentId=doi:10.57745/UXCWOC",
+      "local_path": "raw/optc-corrected",
+      "access": "public_file_selection_storage_gate",
+      "compressed_size_note": "The original release is approximately 1 TB; corrected daily archives range from 12.5 GB to more than 100 GB each.",
+      "license_note": "Original DARPA documentation says public domain/Distribution A. The corrected repository declares custom dataset terms; review those terms before archive download."
+    },
+    "cyber_range": {
+      "local_path": "raw/cyber-range-unseen",
+      "access": "must_be_generated_after_model_and_prompt_freeze",
+      "specification": "quality/security/configs/cyber-range-generation-v1.json"
+    }
+  }
+}

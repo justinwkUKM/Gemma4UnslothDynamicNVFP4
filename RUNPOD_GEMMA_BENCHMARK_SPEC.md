@@ -358,6 +358,17 @@ separate follow-up design for routing telemetry and active-parameter efficiency
 is recorded in `quality/MOE_EVALUATION_PLAN.md` and was not mixed into this
 campaign.
 
+The Qwen3.6 27B follow-up is preserved as a historical partial campaign, and
+Qwen3.6 35B is skipped. Active future model work stays on the three Gemma 4
+checkpoints (E4B, 12B, and 26B A4B), using separately budgeted MoE and security
+campaigns. Quality scores and throughput rankings remain independent.
+
+A separate future track for a Security LLM real-time reasoning benchmark is
+specified in `quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md`. It will use
+public OTRF, LANL, and DARPA OpTC telemetry plus unseen cyber-range data to
+measure correlation, time-to-detect, attack reconstruction, prediction,
+grounding, prompt-injection resistance, and prevention windows.
+
 ## 11. Execution record for the current campaign
 
 This section is an append-only operational record for the campaign started on
@@ -455,3 +466,38 @@ terminates a Pod.
 * [vLLM Gemma 4 recipe](https://docs.vllm.ai/projects/recipes/en/stable/Google/Gemma4.html)
 * [RunPod pricing and storage](https://docs.runpod.io/pods/pricing)
 * [RunPod Pod management](https://docs.runpod.io/pods/manage-pods)
+
+## 13. Future campaign preflight, manifests, and cost shutdown
+
+Qwen3.6, MoE-efficiency, and security-reasoning runs use the common manifest in
+`campaigns/common.py`; they do not write into a completed timestamped Gemma
+snapshot. Before allocating GPU compute, `scripts/test_all.sh` must pass in
+full. Context-generation and report/evaluator tests run locally.
+
+Qwen3.6 35B backend probing is ordered and exhaustive:
+`flashinfer_cutedsl`, `flashinfer_trtllm`, then `cutlass`. Each attempt gets its
+own server log and startup GPU telemetry. A healthy endpoint is insufficient:
+the log must explicitly confirm that vLLM selected the requested backend. CPU
+offload, Marlin, Triton, emulation, OOM, unsupported quantization, and
+unconfirmed selection are preserved as non-rankable compatibility outcomes.
+Qwen3.6 35B is skipped and the Qwen runner has no default model target;
+historical 27B artifacts and reported numbers remain unchanged. The active MoE
+and security campaign matrix uses Gemma 4 E4B, 12B, and 26B A4B.
+
+Every campaign manifest records dataset/model versions, backend, context limit,
+seed, prompt hash, environment hash, GPU type, UTC start/deadline, hourly rate,
+status, acceptance requirements, and SHA-256 hashes for artifacts. `complete`
+is invalid unless all declared requirements are true. Successful requests or
+repetitions are skipped on resume; changed identity settings fail the resume.
+
+After remote collection, run `scripts/verify_campaign.py COLLECTED_ROOT`. Only
+then may an authorized operator stop the exact Pod with:
+
+```bash
+export RUNPOD_API_KEY=...
+scripts/stop_runpod_after_verify.sh --authorized POD_ID COLLECTED_ROOT
+```
+
+The helper verifies terminal manifest state and all artifact hashes, confirms
+the returned Pod identity, requests `EXITED`, verifies the stopped state, and
+does not delete the persistent volume.

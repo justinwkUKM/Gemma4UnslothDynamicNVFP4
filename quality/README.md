@@ -1,10 +1,14 @@
-# Gemma 4 quality and factuality campaign
+# Model quality, MoE efficiency, and security reasoning campaigns
 
 This tree is independent of the synthetic performance campaign in
 `benchmarks/`. It sends the same 100 curated prompts to all three checkpoints,
 uses deterministic decoding, and applies reference-based scoring. Quality
 scores do not measure latency or throughput and cannot be compared with those
 metrics.
+
+Before any GPU is started, run `../scripts/test_all.sh`. The command includes
+the original evaluator/runner tests plus Qwen backend gating, common campaign
+provenance, MoE normalization, and security parser/replay/contract tests.
 
 ## Fixed campaign contract
 
@@ -106,3 +110,45 @@ the per-model server log are linked from the report.
 The separate MoE routing/efficiency follow-up is scoped in
 [`MOE_EVALUATION_PLAN.md`](MOE_EVALUATION_PLAN.md); it is intentionally not a
 quality score or part of this campaign.
+
+## Active model coverage
+
+Qwen3.6 35B is explicitly skipped. Its compatibility runner remains available
+for auditability but has no default model target. The active MoE and security
+matrix uses the three Gemma 4 checkpoints: E4B, 12B, and 26B A4B. The generic
+quality runner also defaults only to those Gemma models, preventing accidental
+Qwen inclusion.
+
+## MoE efficiency campaign
+
+`moe_runner.py` implements `MOE_EVALUATION_PLAN.md` as a separately budgeted
+matrix. The committed configuration fixes a 4,096-token context, seed 0,
+matched 512-input/256-output workloads, three repetitions, and concurrency
+levels 1/4/16. The MoE arm additionally restarts the same checkpoint with
+routing capture enabled. Run-time-unavailable routing/dispatch fields are
+reported as `null`, never estimated from throughput.
+
+```bash
+python3 quality/moe_runner.py --root /workspace/moe/UTC
+```
+
+Each campaign contains model metadata, detailed raw request results, server
+logs, GPU samples, Prometheus snapshots, `summary/moe-summary.json`, CSV, and
+`summary/moe-report.md`. Existing quality scores are read only for
+output-equivalence normalization and are not folded into speed.
+
+## Security reasoning campaign
+
+The incremental harness is under [`security/`](security/). It supports the
+required raw, fixed-window, triggered, stateful-memory, and bounded tool-using
+modes. Public inputs must be anonymized and label-free; fresh cyber-range runs
+use the separate `unseen` track. Ground truth is supplied only to the evaluator
+after inference. The pinned OTRF source and OpTC documentation are downloaded;
+ten OTRF attack archives have been CPU-normalized, while LANL and corrected
+OpTC remain explicitly acquisition/storage gated. See
+[`security/README.md`](security/README.md) for exact status and commands.
+
+The broader future security telemetry track is described in
+[`SECURITY_LLM_REASONING_BENCHMARK_PLAN.md`](SECURITY_LLM_REASONING_BENCHMARK_PLAN.md).
+It will evaluate stateful real-time reasoning over OTRF, LANL, and DARPA OpTC
+data, separately measuring intelligence and operational performance.

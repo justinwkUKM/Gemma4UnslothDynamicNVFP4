@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "source_revision": "d9d40ef123d2c87d5d3df28c96bcab4f0faccc87",
+  "ground_truth_status": "scenario_level_only_event_truth_requires_curation",
+  "scored_inference_allowed": false,
+  "scenarios": [
+    {
+      "scenario_id": "otrf-attack-01",
+      "metadata_id": "SDWIN-201102041306",
+      "title": "PowerShell HTTP Listener",
+      "attack_techniques": ["T1059.001"],
+      "source": "datasets/atomic/windows/execution/host/psh_powershell_httplistener.zip"
+    },
+    {
+      "scenario_id": "otrf-attack-02",
+      "metadata_id": "SDWIN-190625103712",
+      "title": "Empire Mimikatz SAM Extract Hashes",
+      "attack_techniques": ["T1003.002"],
+      "source": "datasets/atomic/windows/credential_access/host/empire_mimikatz_sam_access.zip"
+    },
+    {
+      "scenario_id": "otrf-attack-03",
+      "metadata_id": "SDWIN-190319023812",
+      "title": "Empire Userland Registry Run Keys",
+      "attack_techniques": ["T1547.001"],
+      "source": "datasets/atomic/windows/persistence/host/empire_persistence_registry_modification_run_keys_standard_user.zip"
+    },
+    {
+      "scenario_id": "otrf-attack-04",
+      "metadata_id": "SDWIN-190319024742",
+      "title": "Empire Userland Scheduled Tasks",
+      "attack_techniques": ["T1053.005"],
+      "source": "datasets/atomic/windows/persistence/host/empire_schtasks_creation_standard_user.zip"
+    },
+    {
+      "scenario_id": "otrf-attack-05",
+      "metadata_id": "SDWIN-190518210125",
+      "title": "Empire Invoke SMBExec",
+      "attack_techniques": ["T1021.002"],
+      "source": "datasets/atomic/windows/lateral_movement/host/empire_smbexec_dcerpc_smb_svcctl.zip"
+    },
+    {
+      "scenario_id": "otrf-attack-06",
+      "metadata_id": "SDWIN-200806115603",
+      "title": "Covenant PowerShell Remoting Command",
+      "attack_techniques": ["T1021.006"],
+      "source": "datasets/atomic/windows/lateral_movement/host/covenant_psremoting_command.zip"
+    },
+    {
+      "scenario_id": "otrf-attack-07",
+      "metadata_id": "SDWIN-200806035621",
+      "title": "Covenant SharpWMI Exec",
+      "attack_techniques": ["T1047"],
+      "source": "datasets/atomic/windows/lateral_movement/host/covenant_sharpwmi_create_dcerpc_wmi.zip"
+    },
+    {
+      "scenario_id": "otrf-attack-08",
+      "metadata_id": "SDWIN-201022025808",
+      "title": "Mshta VBScript Execute PowerShell",
+      "attack_techniques": ["T1218.005"],
+      "source": "datasets/atomic/windows/defense_evasion/host/cmd_mshta_vbscript_execute_psh.zip"
+    },
+    {
+      "scenario_id": "otrf-attack-09",
+      "metadata_id": "SDWIN-201023031210",
+      "title": "PurpleSharp PE Injection CreateRemoteThread",
+      "attack_techniques": ["T1055.002"],
+      "source": "datasets/atomic/windows/defense_evasion/host/purplesharp_pe_injection_createremotethread.zip"
+    },
+    {
+      "scenario_id": "otrf-attack-10",
+      "metadata_id": "SDWIN-220703123711",
+      "title": "Disabling Process Command Line Logging via Registry Modification",
+      "attack_techniques": ["T1562.002"],
+      "source": "datasets/atomic/windows/defense_evasion/host/reg_cmd_process_commandline_logging_disabled.zip"
+    }
+  ]
+}
