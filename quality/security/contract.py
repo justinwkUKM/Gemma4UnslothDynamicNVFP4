@@ -32,8 +32,16 @@ REQUIRED = {
 def parse_model_json(text: str) -> dict[str, Any]:
     stripped = text.strip()
     if stripped.startswith("```"):
-        stripped = re.sub(r"^```(?:json)?\s*", "", stripped, flags=re.I)
-        stripped = re.sub(r"\s*```$", "", stripped)
+        fenced = re.fullmatch(
+            r"```(?:json)?\s*(.*?)\s*```\s*(?:<turn\|>)?",
+            stripped,
+            flags=re.I | re.S,
+        )
+        if fenced is None:
+            raise ContractError("model output contains text outside the JSON code fence")
+        stripped = fenced.group(1)
+    elif stripped.endswith("<turn|>"):
+        stripped = stripped[: -len("<turn|>")].rstrip()
     value = json.loads(stripped)
     if not isinstance(value, dict):
         raise ContractError("model output must be a JSON object")

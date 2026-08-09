@@ -30,7 +30,7 @@ from campaigns.common import (  # noqa: E402
     utc_now,
 )
 from benchmarks.qwen36_runner import gpu_sampler  # noqa: E402
-from quality.security.context import MODES, build_investigations, model_messages  # noqa: E402
+from quality.security.context import MODES, bound_investigations, build_investigations, model_messages  # noqa: E402
 from quality.security.contract import ContractError, parse_model_json, validate_analysis  # noqa: E402
 from quality.security.state import IncidentState, InvestigationTools  # noqa: E402
 
@@ -40,6 +40,50 @@ SECURITY_MODELS = {
     "gemma-4-E4B-it-NVFP4": "unsloth/gemma-4-E4B-it-NVFP4",
     "gemma-4-12b-it-NVFP4": "unsloth/gemma-4-12b-it-NVFP4",
     "gemma-4-26B-A4B-it-NVFP4": "unsloth/gemma-4-26B-A4B-it-NVFP4",
+}
+
+
+def _claim_schema(text_key: str, *, confidence: bool = False) -> dict[str, Any]:
+    properties: dict[str, Any] = {
+        text_key: {"type": "string", "maxLength": 120},
+        "evidence_ids": {
+            "type": "array",
+            "items": {"type": "string"},
+            "minItems": 1,
+            "maxItems": 5,
+        },
+    }
+    required = [text_key, "evidence_ids"]
+    if confidence:
+        properties["confidence"] = {"type": "number", "minimum": 0, "maximum": 1}
+        required.append("confidence")
+    return {
+        "type": "object",
+        "properties": properties,
+        "required": required,
+        "additionalProperties": False,
+    }
+
+
+ANALYSIS_JSON_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "status": {"type": "string", "enum": ["benign", "suspicious", "malicious", "insufficient_evidence"]},
+        "risk_score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "observations": {"type": "array", "items": _claim_schema("summary"), "maxItems": 3},
+        "hypotheses": {"type": "array", "items": _claim_schema("description", confidence=True), "maxItems": 2},
+        "attack_techniques": {"type": "array", "items": _claim_schema("technique_id"), "maxItems": 2},
+        "related_entities": {"type": "array", "items": {"type": "string", "maxLength": 120}, "maxItems": 5},
+        "recommendations": {"type": "array", "items": _claim_schema("action"), "maxItems": 2},
+        "missing_information": {"type": "array", "items": {"type": "string", "maxLength": 120}, "maxItems": 2},
+        "predicted_next_actions": {"type": "array", "items": _claim_schema("action", confidence=True), "maxItems": 2},
+    },
+    "required": [
+        "status", "risk_score", "confidence", "observations", "hypotheses", "attack_techniques",
+        "related_entities", "recommendations", "missing_information", "predicted_next_actions",
+    ],
+    "additionalProperties": False,
 }
 
 
@@ -110,11 +154,20 @@ def payload(model: str, messages: list[dict[str, str]], args: argparse.Namespace
         "top_p": 1,
         "seed": args.seed,
         "max_tokens": args.max_tokens,
+        "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "security_analysis",
+                "strict": True,
+                "schema": ANALYSIS_JSON_SCHEMA,
+            },
+        },
     }
 
 
 def one_attempt(job: dict[str, Any], args: argparse.Namespace, tools: InvestigationTools | None) -> dict[str, Any]:
     started_at = utc_now()
+    response: dict[str, Any] = {}
     try:
         response = request_stream(args.base_url, payload(args.model, model_messages(job), args), args.request_timeout)
         preliminary = parse_model_json(response["output_text"])
@@ -162,6 +215,11 @@ def one_attempt(job: dict[str, Any], args: argparse.Namespace, tools: Investigat
         "status": "error",
         "started_at_utc": started_at,
         "finished_at_utc": utc_now(),
+        "output_text": response.get("output_text", ""),
+        "latency_seconds": response.get("latency_seconds"),
+        "ttft_seconds": response.get("ttft_seconds"),
+        "tpot_seconds": response.get("tpot_seconds"),
+        "usage": response.get("usage", {}),
         "error": {"classification": classification, "detail": detail},
     }
 
@@ -225,12 +283,19 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--context-limit", type=int, default=4096)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--max-tokens", type=int, default=1024)
+    parser.add_argument("--max-events-per-context", type=int, default=20)
+    parser.add_argument("--max-prompt-bytes", type=int, default=8000)
     parser.add_argument("--request-timeout", type=float, default=180)
     parser.add_argument("--max-retries", type=int, default=1)
     parser.add_argument("--max-tool-calls", type=int, default=3)
     parser.add_argument("--concurrency", type=int, default=1)
     parser.add_argument("--hourly-rate", type=float, default=0.69)
     parser.add_argument("--max-campaign-seconds", type=float, default=7200)
+    parser.add_argument(
+        "--unscored-smoke",
+        action="store_true",
+        help="run inference but force a partial manifest because benchmark labels/controls are not ready",
+    )
     parser.add_argument("--dry-run", action="store_true", help="write contexts without model inference")
     return parser
 
@@ -238,7 +303,10 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     args.modes = args.modes or ["triggered", "stateful"]
-    if args.concurrency < 1 or args.max_campaign_seconds <= 0 or args.hourly_rate <= 0:
+    if (
+        args.concurrency < 1 or args.max_campaign_seconds <= 0 or args.hourly_rate <= 0
+        or args.max_events_per_context < 1 or args.max_prompt_bytes < 1
+    ):
         print("error: concurrency and budgets must be positive", file=sys.stderr)
         return 2
     try:
@@ -273,12 +341,22 @@ def main(argv: list[str] | None = None) -> int:
         deadline_utc=(datetime.now(timezone.utc) + timedelta(seconds=args.max_campaign_seconds)).isoformat(),
         hourly_rate_usd=args.hourly_rate,
         config_hash=canonical_sha256(run_config),
-        extra={"track": args.track, "labels_available_to_model": False, "public_data_anonymized": args.track == "public"},
+        extra={
+            "track": args.track,
+            "labels_available_to_model": False,
+            "public_data_anonymized": args.track == "public",
+            "unscored_smoke": args.unscored_smoke,
+        },
     )
     jobs = []
     states: dict[str, IncidentState] = {}
     for mode in args.modes:
         jobs.extend(build_investigations(events, mode=mode, window_seconds=args.window_seconds, state_by_entity=states))
+    jobs = bound_investigations(
+        jobs,
+        max_events=args.max_events_per_context,
+        max_prompt_bytes=args.max_prompt_bytes,
+    )
     atomic_write_jsonl(args.results_dir / "contexts.jsonl", jobs)
     if args.dry_run:
         manifest.finish(
@@ -341,9 +419,10 @@ def main(argv: list[str] | None = None) -> int:
     sampler_stop.set()
     sampler_thread.join(5)
     requests_complete = len(existing) == len(jobs) and all(record.get("status") == "success" for record in existing.values())
-    contracts_complete = all(record.get("contract_verdict", {}).get("valid") is True for record in existing.values())
+    contracts_complete = all((record.get("contract_verdict") or {}).get("valid") is True for record in existing.values())
     model_revision_resolved = args.model_revision != "unresolved"
-    complete = requests_complete and contracts_complete and model_revision_resolved
+    execution_succeeded = requests_complete and contracts_complete and model_revision_resolved
+    complete = execution_succeeded and not args.unscored_smoke
     manifest.finish(
         "complete" if complete else "partial",
         requirements={
@@ -351,11 +430,17 @@ def main(argv: list[str] | None = None) -> int:
             "all_investigations_complete": requests_complete,
             "all_claims_contract_valid": contracts_complete,
             "model_revision_resolved": model_revision_resolved,
+            "scored_dataset_ready": not args.unscored_smoke,
         },
         artifact_root=args.results_dir,
+        detail=(
+            "unscored smoke: dataset controls and event-level ground truth are not ready"
+            if args.unscored_smoke
+            else None
+        ),
     )
     print(json.dumps({"status": "complete" if complete else "partial", "investigations": len(jobs), "results": str(output_path)}, indent=2))
-    return 0 if complete else 1
+    return 0 if execution_succeeded else 1
 
 
 if __name__ == "__main__":

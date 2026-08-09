@@ -10,14 +10,14 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from quality.security.context import build_investigations
-from quality.security.contract import ContractError, validate_analysis
+from quality.security.context import bound_investigations, build_investigations, model_messages
+from quality.security.contract import ContractError, parse_model_json, validate_analysis
 from quality.security.adapters import adapt_lanl, adapt_optc, adapt_otrf
 from quality.security.datasets import build_status, prepare_lanl
 from quality.security.evaluator import evaluate
 from quality.security.parser import CanonicalTelemetryParser, anonymize_public_events
 from quality.security.replay import ReplayEngine
-from quality.security.runner import SECURITY_MODELS, assert_inference_safe
+from quality.security.runner import SECURITY_MODELS, assert_inference_safe, payload
 from quality.security.prepare import remap_truth_ids
 
 
@@ -82,13 +82,49 @@ class SecurityHarnessTests(unittest.TestCase):
         self.assertNotIn("ALICE", rendered)
         self.assertNotIn("10.0.0.4", rendered)
         self.assertNotIn("mordorDataset", rendered)
-        self.assertIn("powershell.exe -encodedCommand", rendered)
+        self.assertNotIn("powershell.exe -encodedCommand", rendered)
+        self.assertEqual(anonymized["action"], "PowerShell encoded command")
         self.assertEqual(anonymized["dataset"], "public-telemetry")
 
     def test_triggered_context_omits_benign_noise(self):
         values = [event("E1", action="routine heartbeat"), event("E2", action="PowerShell encoded command")]
         jobs = build_investigations(values, mode="triggered", window_seconds=30)
         self.assertEqual(jobs[0]["event_ids"], ["E2"])
+
+    def test_triggered_context_is_compact_and_hard_bounded(self):
+        values = []
+        for index in range(12):
+            value = event(
+                f"E{index}",
+                f"2026-01-01T00:00:{index:02d}+00:00",
+                action="PowerShell execution",
+            )
+            value["attributes"] = {
+                "Message": "duplicated raw text " * 1000,
+                "EventID": 4688,
+                "semantic_indicators": ["powershell"],
+            }
+            values.append(value)
+        jobs = build_investigations(values, mode="triggered", window_seconds=30)
+        bounded = bound_investigations(jobs, max_events=5, max_prompt_bytes=8000)
+        self.assertEqual(sum(len(job["events"]) for job in bounded), 12)
+        self.assertTrue(all(len(job["events"]) <= 5 for job in bounded))
+        self.assertTrue(all(
+            len(json.dumps(model_messages(job)).encode("utf-8")) <= 8000
+            for job in bounded
+        ))
+        self.assertNotIn("duplicated raw text", json.dumps(bounded))
+
+    def test_model_contract_caps_response_size(self):
+        messages = model_messages({"mode": "triggered", "events": [], "event_ids": []})
+        self.assertIn("at most 3 observations", messages[0]["content"])
+        self.assertIn("under 120 characters", messages[0]["content"])
+
+    def test_request_uses_strict_bounded_json_schema(self):
+        request = payload("model", [], SimpleNamespace(seed=0, max_tokens=1024))
+        schema = request["response_format"]["json_schema"]["schema"]
+        self.assertFalse(schema["additionalProperties"])
+        self.assertEqual(schema["properties"]["observations"]["maxItems"], 3)
 
     def test_security_matrix_contains_only_gemma_4_models(self):
         self.assertEqual(set(SECURITY_MODELS), {
@@ -103,6 +139,11 @@ class SecurityHarnessTests(unittest.TestCase):
         self.assertTrue(verdict["valid"])
         invented = validate_analysis(analysis("E999"), {"E1"})
         self.assertFalse(invented["valid"])
+
+    def test_contract_accepts_gemma_fence_sentinel_but_rejects_prose(self):
+        self.assertEqual(parse_model_json('```json\n{"status": "benign"}\n```<turn|>')["status"], "benign")
+        with self.assertRaises(ContractError):
+            parse_model_json('```json\n{"status": "benign"}\n``` trailing prose')
 
     def test_ground_truth_ids_use_same_anonymization(self):
         values = anonymize_public_events([event("E1")], salt="fixture")

@@ -8,6 +8,7 @@ import gzip
 import hashlib
 import io
 import json
+import re
 import tarfile
 import zipfile
 from datetime import datetime, timedelta, timezone
@@ -33,6 +34,17 @@ LANL_COLUMNS = {
     "redteam": ("time", "user", "source_computer", "destination_computer"),
 }
 LANL_ANCHOR = datetime(2030, 1, 1, tzinfo=timezone.utc)
+SEMANTIC_PATTERNS = {
+    "powershell": re.compile(r"powershell", re.I),
+    "encoded_command": re.compile(r"encodedcommand|(?:^|[\s\"'])-enc(?:[\s\"']|$)", re.I),
+    "command_shell": re.compile(r"(?:^|[\\/\s])cmd\.exe", re.I),
+    "credential_dumping": re.compile(r"mimikatz|lsass|logonpasswords", re.I),
+    "scheduled_task": re.compile(r"schtasks|scheduled task", re.I),
+    "wmi": re.compile(r"wmic|wbem|windows management instrumentation", re.I),
+    "remote_service": re.compile(r"psexec|smbexec|createservice", re.I),
+    "signed_binary_proxy": re.compile(r"rundll32|regsvr32|mshta|wuauclt", re.I),
+    "network_listener": re.compile(r"http listener|httplistener|listen(?:ing)? port", re.I),
+}
 
 
 def _stable_id(dataset: str, source_name: str, line_number: int) -> str:
@@ -47,6 +59,11 @@ def _attributes(record: dict[str, Any], consumed: Iterable[str]) -> dict[str, An
         for key, value in record.items()
         if key not in omitted and key.lower() not in LABEL_FIELDS
     }
+
+
+def _semantic_indicators(record: dict[str, Any]) -> list[str]:
+    searchable = json.dumps(record, ensure_ascii=False, sort_keys=True)
+    return sorted(name for name, pattern in SEMANTIC_PATTERNS.items() if pattern.search(searchable))
 
 
 def _open_text(path: Path) -> TextIO:
@@ -135,6 +152,10 @@ def adapt_otrf(path: Path) -> Iterator[dict[str, Any]]:
             "Hostname", "hostname", "Computer", "computer", "host", "Channel",
             "@stream", "SourceName", "source_type", "action", "EventType", "Category", "Opcode",
         }
+        attributes = _attributes(record, consumed)
+        indicators = _semantic_indicators(record)
+        if indicators:
+            attributes["semantic_indicators"] = indicators
         yield {
             "schema_version": 1,
             "event_id": _stable_id("otrf", source_name, line_number),
@@ -144,7 +165,7 @@ def adapt_otrf(path: Path) -> Iterator[dict[str, Any]]:
             "entity_id": str(entity),
             "action": str(action),
             "outcome": str(record.get("EventType") or record.get("status") or "unknown"),
-            "attributes": _attributes(record, consumed),
+            "attributes": attributes,
         }
 
 

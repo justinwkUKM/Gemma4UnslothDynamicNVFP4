@@ -48,8 +48,11 @@ IP_NAMES = {
     "srcaddress", "srcip",
 }
 PATH_NAMES = {
-    "application", "file", "filename", "filepath", "image",
+    "application", "commandline", "file", "filename", "filepath", "image",
     "imagepath", "parentimagepath", "path", "process", "processname", "processpath",
+}
+TIMESTAMP_NAMES = {
+    "datetime", "eventreceivedtime", "eventtime", "timecreated", "timestamp", "timestampms", "utctime",
 }
 
 
@@ -157,6 +160,8 @@ def _normalized_key(key: str) -> str:
 
 def _value_kind(key: str, value: str) -> str | None:
     normalized = _normalized_key(key)
+    if normalized in TIMESTAMP_NAMES or normalized.endswith(("timestamp", "timecreated")):
+        return "time"
     if (
         normalized in IDENTITY_NAMES
         or normalized.endswith((
@@ -172,7 +177,11 @@ def _value_kind(key: str, value: str) -> str | None:
             return "ip"
         except ValueError:
             return "entity"
-    if normalized in PATH_NAMES or PATH_KEY.search(key):
+    if (
+        normalized in PATH_NAMES
+        or normalized.endswith(("commandline", "filename", "filepath", "image", "imagepath", "processname", "processpath"))
+        or PATH_KEY.search(key)
+    ):
         return "artifact"
     return None
 
