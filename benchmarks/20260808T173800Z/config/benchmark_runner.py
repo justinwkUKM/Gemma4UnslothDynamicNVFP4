@@ -142,7 +142,7 @@ for model_id, checkpoint in MODELS:
     qwen_tuning = (["--max-model-len", "4096", "--max-num-seqs", "16"]
                    if checkpoint.lower().startswith("unsloth/qwen") else
                    ["--max-model-len", "8192"])
-    moe_backend = ("triton" if checkpoint.lower().endswith("35b-a3b-nvfp4")
+    moe_backend = ("flashinfer_cutedsl" if checkpoint.lower().endswith("35b-a3b-nvfp4")
                    else "flashinfer_cutlass")
     cmd=[str(VLLM),"serve",checkpoint,"--host","127.0.0.1","--port","8000","--served-model-name",checkpoint,
          *qwen_tuning,"--gpu-memory-utilization","0.90",
