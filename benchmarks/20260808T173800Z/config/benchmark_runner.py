@@ -136,8 +136,14 @@ for model_id, checkpoint in MODELS:
     if time.monotonic()+900 > DEADLINE: break
     model_dir=ROOT/"results"/model_id; model_dir.mkdir(parents=True,exist_ok=True)
     log=ROOT/"logs"/(model_id+".server.log"); gpu=ROOT/"logs"/(model_id+".gpu.csv")
+    # Qwen3.6-27B barely fits on a 32-GiB RTX 5090 at the default 8k/256-seq
+    # profiling budget. Keep the workload prompt+generation within 4k and
+    # cap concurrent KV slots so startup is reproducible on this hardware.
+    qwen_tuning = (["--max-model-len", "4096", "--max-num-seqs", "16"]
+                   if checkpoint.lower().startswith("unsloth/qwen") else
+                   ["--max-model-len", "8192"])
     cmd=[str(VLLM),"serve",checkpoint,"--host","127.0.0.1","--port","8000","--served-model-name",checkpoint,
-         "--max-model-len","8192","--gpu-memory-utilization","0.90",
+         *qwen_tuning,"--gpu-memory-utilization","0.90",
          "--linear-backend","auto","--moe-backend","flashinfer_cutlass","--seed","0"]
     if checkpoint.lower().startswith("unsloth/gemma"):
         cmd[cmd.index("--linear-backend"):cmd.index("--linear-backend")] = ["--reasoning-parser", "gemma4"]

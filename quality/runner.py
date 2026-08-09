@@ -264,7 +264,9 @@ def server_command(args: argparse.Namespace, checkpoint: str) -> list[str]:
         "--host", args.host,
         "--port", str(args.port),
         "--served-model-name", checkpoint,
-        "--max-model-len", "8192",
+        *( ["--max-model-len", "4096", "--max-num-seqs", "16"]
+           if checkpoint.lower().startswith("unsloth/qwen")
+           else ["--max-model-len", "8192"] ),
         "--gpu-memory-utilization", "0.90",
         "--linear-backend", "auto",
         "--moe-backend", "flashinfer_cutlass",
