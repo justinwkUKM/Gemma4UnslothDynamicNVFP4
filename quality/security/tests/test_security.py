@@ -1,10 +1,19 @@
 import json
+import gzip
+import io
+import os
+import tarfile
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from quality.security.context import build_investigations
 from quality.security.contract import ContractError, validate_analysis
+from quality.security.adapters import adapt_lanl, adapt_optc, adapt_otrf
+from quality.security.datasets import build_status, prepare_lanl
 from quality.security.evaluator import evaluate
 from quality.security.parser import CanonicalTelemetryParser, anonymize_public_events
 from quality.security.replay import ReplayEngine
@@ -59,6 +68,23 @@ class SecurityHarnessTests(unittest.TestCase):
         self.assertNotEqual(anonymized[0]["entity_id"], "HOST-1")
         assert_inference_safe(anonymized, track="public")
 
+    def test_public_anonymization_scrubs_identifiers_inside_messages(self):
+        value = event()
+        value["attributes"] = {
+            "SourceAddress": "10.0.0.4",
+            "TargetUserName": "ALICE",
+            "tags": ["mordorDataset"],
+            "CommandLine": "powershell.exe -encodedCommand SQBFAFgA",
+            "Message": "ALICE connected from 10.0.0.4 using powershell.exe",
+        }
+        anonymized = anonymize_public_events([value], salt="fixture")[0]
+        rendered = json.dumps(anonymized)
+        self.assertNotIn("ALICE", rendered)
+        self.assertNotIn("10.0.0.4", rendered)
+        self.assertNotIn("mordorDataset", rendered)
+        self.assertIn("powershell.exe -encodedCommand", rendered)
+        self.assertEqual(anonymized["dataset"], "public-telemetry")
+
     def test_triggered_context_omits_benign_noise(self):
         values = [event("E1", action="routine heartbeat"), event("E2", action="PowerShell encoded command")]
         jobs = build_investigations(values, mode="triggered", window_seconds=30)
@@ -99,6 +125,85 @@ class SecurityHarnessTests(unittest.TestCase):
         self.assertEqual(score["security_intelligence"]["detection_recall"], 1.0)
         self.assertIn("operational", score)
         self.assertNotIn("combined_score", score)
+
+    def test_real_dataset_adapters(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            otrf = root / "otrf.zip"
+            with zipfile.ZipFile(otrf, "w") as archive:
+                archive.writestr("events.json", json.dumps({
+                    "@timestamp": "2020-01-01T00:00:00Z",
+                    "Hostname": "HOST-1", "Channel": "Security",
+                    "EventID": 4688, "Category": "Process Creation",
+                }) + "\n")
+            otrf_event = next(adapt_otrf(otrf))
+            self.assertEqual(otrf_event["entity_id"], "HOST-1")
+            self.assertEqual(otrf_event["action"], "Process Creation")
+
+            lanl = root / "auth.txt.gz"
+            with gzip.open(lanl, "wt", encoding="utf-8") as handle:
+                handle.write("1,U1@DOM1,U2@DOM1,C1,C2,Kerberos,Network,LogOn,Success\n")
+            lanl_event = next(adapt_lanl(lanl, "auth"))
+            self.assertEqual(lanl_event["source_type"], "auth")
+            self.assertEqual(lanl_event["outcome"], "Success")
+
+            optc = root / "optc.jsonl"
+            optc.write_text(json.dumps({
+                "timestamp": 1539120748904,
+                "id": "e1", "hostname": "H1", "object": "PROCESS", "action": "CREATE",
+            }) + "\n", encoding="utf-8")
+            optc_event = next(adapt_optc(optc))
+            self.assertEqual(optc_event["timestamp"], "2018-10-09T21:32:28.904000+00:00")
+            self.assertEqual(optc_event["source_type"], "PROCESS")
+
+            optc_tar = root / "2019-09-16.tar"
+            payload = optc.read_bytes()
+            with tarfile.open(optc_tar, "w") as archive:
+                info = tarfile.TarInfo("ecar/day.json")
+                info.size = len(payload)
+                archive.addfile(info, io.BytesIO(payload))
+            self.assertEqual(next(adapt_optc(optc_tar))["event_id"], "e1")
+
+    def test_dataset_status_requires_real_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            status = build_status(Path(directory))
+        self.assertEqual(status["datasets"]["otrf"]["acquisition"], "missing")
+        self.assertEqual(status["datasets"]["lanl"]["present_files"], [])
+        self.assertFalse(status["datasets"]["cyber_range"]["scored_inference_ready"])
+
+    def test_lanl_merge_keeps_redteam_truth_separate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            values = {
+                "auth": (
+                    "1,U1@DOM1,U2@DOM1,C1,C2,Kerberos,Network,LogOn,Success\n"
+                    "1,U1@DOM1,U2@DOM1,C1,C2,Kerberos,Network,LogOn,Success\n"
+                ),
+                "proc": "1,U1@DOM1,C1,P1,Start\n",
+                "flows": "1,1,C1,123,C2,443,6,2,90\n",
+                "dns": "1,C1,C2\n",
+                "redteam": "1,U1@DOM1,C1,C2\n",
+            }
+            for name, content in values.items():
+                with gzip.open(root / f"{name}.txt.gz", "wt", encoding="utf-8") as handle:
+                    handle.write(content)
+            args = SimpleNamespace(
+                input=root,
+                output=root / "canonical.jsonl",
+                ground_truth_output=root / "sealed-truth.json",
+                salt_env="SECURITY_BENCHMARK_SALT",
+                limit=None,
+            )
+            with patch.dict(os.environ, {"SECURITY_BENCHMARK_SALT": "fixture-salt-long-enough"}):
+                prepare_lanl(args)
+            truth = json.loads(args.ground_truth_output.read_text(encoding="utf-8"))
+            inference = args.output.read_text(encoding="utf-8")
+            self.assertEqual(truth["matched_auth_event_count"], 2)
+            self.assertEqual(truth["matched_redteam_key_count"], 1)
+            self.assertEqual(truth["unmatched_redteam_event_count"], 0)
+            self.assertNotIn("known_redteam", inference)
+            self.assertNotIn("U1@DOM1", inference)
+            self.assertFalse(truth["scored_inference_allowed"])
 
 
 if __name__ == "__main__":

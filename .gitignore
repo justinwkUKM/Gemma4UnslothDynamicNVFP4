@@ -9,6 +9,7 @@ venv/
 workspace/
 cache/
 model-cache/
+security-data/
 *.pem
 *.key
 id_ed25519

@@ -143,7 +143,10 @@ The incremental harness is under [`security/`](security/). It supports the
 required raw, fixed-window, triggered, stateful-memory, and bounded tool-using
 modes. Public inputs must be anonymized and label-free; fresh cyber-range runs
 use the separate `unseen` track. Ground truth is supplied only to the evaluator
-after inference. See [`security/README.md`](security/README.md) for commands.
+after inference. The pinned OTRF source and OpTC documentation are downloaded;
+ten OTRF attack archives have been CPU-normalized, while LANL and corrected
+OpTC remain explicitly acquisition/storage gated. See
+[`security/README.md`](security/README.md) for exact status and commands.
 
 The broader future security telemetry track is described in
 [`SECURITY_LLM_REASONING_BENCHMARK_PLAN.md`](SECURITY_LLM_REASONING_BENCHMARK_PLAN.md).

@@ -9,7 +9,7 @@ import json
 import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Iterator, Mapping
 
 from campaigns.common import atomic_write_jsonl
 
@@ -25,6 +25,7 @@ LABEL_FIELDS = {
     "scenario_label",
     "red_team",
 }
+SOURCE_MARKER_FIELDS = {"tags", "dataset_name", "collection_name", "scenario_name"}
 ALIASES = {
     "event_id": ("event_id", "id", "event_uid", "EventID"),
     "timestamp": ("timestamp", "time", "event_time", "datetime", "TimeCreated"),
@@ -36,6 +37,20 @@ ALIASES = {
 IDENTITY_KEY = re.compile(r"(?:user|account|principal|host|computer|device|asset)(?:name|id)?$", re.I)
 IP_KEY = re.compile(r"(?:src|dst|source|destination)?_?ip(?:_address)?$", re.I)
 PATH_KEY = re.compile(r"(?:file|file_path|path|image_path|process_path)$", re.I)
+IDENTITY_NAMES = {
+    "account", "accountname", "actorid", "computer", "computername", "device",
+    "deviceid", "domain", "entity", "entityid", "host", "hostname", "objectid",
+    "principal", "remoteuserid", "sid", "user", "userid", "username",
+}
+IP_NAMES = {
+    "destaddress", "destinationaddress", "destinationip", "dstaddress", "dstip",
+    "idorigh", "idresph", "ip", "ipaddress", "sourceaddress", "sourceip",
+    "srcaddress", "srcip",
+}
+PATH_NAMES = {
+    "application", "file", "filename", "filepath", "image",
+    "imagepath", "parentimagepath", "path", "process", "processname", "processpath",
+}
 
 
 class TelemetryError(ValueError):
@@ -136,28 +151,114 @@ def anonymized_event_id(value: str, salt: str) -> str:
     return _token("event", value, salt)
 
 
+def _normalized_key(key: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", key.lower())
+
+
+def _value_kind(key: str, value: str) -> str | None:
+    normalized = _normalized_key(key)
+    if (
+        normalized in IDENTITY_NAMES
+        or normalized.endswith((
+            "username", "userid", "accountname", "accountid", "hostname",
+            "computername", "domainname", "principalname", "deviceid", "objectid", "actorid",
+        ))
+        or IDENTITY_KEY.search(key)
+    ):
+        return "entity"
+    if normalized in IP_NAMES or IP_KEY.search(key):
+        try:
+            ipaddress.ip_address(value)
+            return "ip"
+        except ValueError:
+            return "entity"
+    if normalized in PATH_NAMES or PATH_KEY.search(key):
+        return "artifact"
+    return None
+
+
 def _anonymize_value(key: str, value: Any, salt: str) -> Any:
     if isinstance(value, dict):
         return {
             child_key: _anonymize_value(child_key, child_value, salt)
             for child_key, child_value in value.items()
-            if child_key.lower() not in LABEL_FIELDS
+            if child_key.lower() not in LABEL_FIELDS | SOURCE_MARKER_FIELDS
         }
     if isinstance(value, list):
         return [_anonymize_value(key, item, salt) for item in value]
     if not isinstance(value, str):
         return value
-    if IP_KEY.search(key):
-        try:
-            ipaddress.ip_address(value)
-            return _token("ip", value, salt)
-        except ValueError:
-            pass
-    if IDENTITY_KEY.search(key):
-        return _token("entity", value, salt)
-    if PATH_KEY.search(key):
-        return _token("artifact", value, salt)
+    kind = _value_kind(key, value)
+    if kind:
+        return _token(kind, value, salt)
     return value
+
+
+def _collect_sensitive(value: Any, salt: str, key: str = "") -> dict[str, str]:
+    replacements: dict[str, str] = {}
+    if isinstance(value, dict):
+        for child_key, child_value in value.items():
+            replacements.update(_collect_sensitive(child_value, salt, child_key))
+    elif isinstance(value, list):
+        for child in value:
+            replacements.update(_collect_sensitive(child, salt, key))
+    elif isinstance(value, str) and len(value) >= 3:
+        kind = _value_kind(key, value)
+        if kind:
+            replacements[value] = _token(kind, value, salt)
+    return replacements
+
+
+def _replace_sensitive(value: Any, replacements: Mapping[str, str]) -> Any:
+    if isinstance(value, dict):
+        return {key: _replace_sensitive(child, replacements) for key, child in value.items()}
+    if isinstance(value, list):
+        return [_replace_sensitive(child, replacements) for child in value]
+    if isinstance(value, str):
+        result = value
+        for original in sorted(replacements, key=len, reverse=True):
+            result = result.replace(original, replacements[original])
+        return result
+    return value
+
+
+def anonymize_public_event(
+    event: Mapping[str, Any], *, salt: str, first_timestamp: datetime
+) -> dict[str, Any]:
+    """Anonymize one canonical event without retaining a corpus in memory."""
+
+    timestamp = datetime(2030, 1, 1, tzinfo=timezone.utc) + (
+        parse_timestamp(event["timestamp"]) - first_timestamp
+    )
+    replacements = _collect_sensitive(event, salt)
+    cleaned = {
+        key: _anonymize_value(key, value, salt)
+        for key, value in event.items()
+        if key.lower() not in LABEL_FIELDS
+    }
+    cleaned = _replace_sensitive(cleaned, replacements)
+    cleaned["event_id"] = anonymized_event_id(str(event["event_id"]), salt)
+    cleaned["entity_id"] = _token("entity", str(event["entity_id"]), salt)
+    cleaned["timestamp"] = timestamp.isoformat()
+    cleaned["dataset"] = "public-telemetry"
+    cleaned["public_data_anonymized"] = True
+    return cleaned
+
+
+def iter_anonymized_public_events(
+    events: Iterable[Mapping[str, Any]], *, salt: str
+) -> Iterator[dict[str, Any]]:
+    """Stream deterministic anonymization for chronologically ordered events."""
+
+    iterator = iter(events)
+    try:
+        first_event = next(iterator)
+    except StopIteration:
+        return
+    first_timestamp = parse_timestamp(first_event["timestamp"])
+    yield anonymize_public_event(first_event, salt=salt, first_timestamp=first_timestamp)
+    for event in iterator:
+        yield anonymize_public_event(event, salt=salt, first_timestamp=first_timestamp)
 
 
 def anonymize_public_events(events: Iterable[Mapping[str, Any]], *, salt: str) -> list[dict[str, Any]]:
@@ -167,20 +268,10 @@ def anonymize_public_events(events: Iterable[Mapping[str, Any]], *, salt: str) -
     if not values:
         return []
     first = min(parse_timestamp(event["timestamp"]) for event in values)
-    anchor = datetime(2030, 1, 1, tzinfo=timezone.utc)
-    anonymized = []
-    for event in values:
-        timestamp = anchor + (parse_timestamp(event["timestamp"]) - first)
-        cleaned = {
-            key: _anonymize_value(key, value, salt)
-            for key, value in event.items()
-            if key.lower() not in LABEL_FIELDS
-        }
-        cleaned["event_id"] = anonymized_event_id(str(event["event_id"]), salt)
-        cleaned["entity_id"] = _token("entity", str(event["entity_id"]), salt)
-        cleaned["timestamp"] = timestamp.isoformat()
-        cleaned["public_data_anonymized"] = True
-        anonymized.append(cleaned)
+    anonymized = [
+        anonymize_public_event(event, salt=salt, first_timestamp=first)
+        for event in values
+    ]
     return sorted(anonymized, key=lambda item: (item["timestamp"], item["event_id"]))
 
 

@@ -152,8 +152,12 @@ recorded above, while Qwen3.6 35B is explicitly skipped. The active future
 campaigns use the three Gemma 4 checkpoints: E4B, 12B, and 26B A4B.
 
 The [Security LLM real-time reasoning benchmark](quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md)
-now has an executable foundation under `quality/security/`. Dataset acquisition
-and full public/unseen campaigns remain to be run. It measures
+now has an executable foundation under `quality/security/`. The pinned OTRF
+source, OpTC documentation/ground truth, real-format streaming adapters, and
+ten CPU-normalized OTRF attack scenarios are prepared locally. LANL still
+requires its official request form; corrected OpTC is storage/terms gated; and
+the unseen range must be collected only after benchmark freeze. No security
+model inference has run. The benchmark measures
 cross-source correlation, time-to-detect, attack reconstruction, prediction,
 evidence grounding, prompt-injection resistance, and prevention windows.
 

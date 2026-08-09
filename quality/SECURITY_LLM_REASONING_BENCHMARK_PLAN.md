@@ -1,9 +1,12 @@
 # Security LLM real-time reasoning benchmark plan
 
 This is a separately budgeted evaluation track. The incremental executable
-foundation is in [`security/`](security/); dataset acquisition and full public
-plus unseen campaigns remain outstanding. It is not part of the
-completed Gemma quality score or synthetic serving benchmark.
+foundation is in [`security/`](security/). OTRF and OpTC documentation are
+pinned locally, ten OTRF attack sources are normalized, and source-specific
+OTRF/LANL/OpTC adapters are implemented. LANL acquisition, corrected OpTC
+archives, event-level truth curation, benign controls, unseen range collection,
+and all model inference remain outstanding. It is not part of the completed
+Gemma quality score or synthetic serving benchmark.
 
 Qwen3.6 35B is skipped. The active model matrix is Gemma 4 E4B, 12B, and 26B
 A4B, run as separate campaigns with identical telemetry and settings.

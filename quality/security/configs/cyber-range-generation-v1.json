@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "track": "unseen",
+  "generation_status": "specification_only",
+  "freshness_rule": "Collect telemetry only after model checkpoints, prompts, rules, and public-dataset tuning are frozen.",
+  "isolation": {
+    "internet_egress": "deny_by_default",
+    "target_network": "disposable_isolated_range",
+    "credentials": "synthetic_and_unique_per_run",
+    "cleanup": "destroy_range_after_artifact_verification"
+  },
+  "required_telemetry": [
+    "endpoint_process",
+    "endpoint_file_and_registry",
+    "authentication",
+    "dns",
+    "network_flow",
+    "collector_health"
+  ],
+  "required_controls": [
+    "benign_business_workflow",
+    "benign_administration",
+    "attack_execution",
+    "prompt_injection_in_untrusted_fields"
+  ],
+  "separation": {
+    "inference_events": "label_free/canonical.jsonl",
+    "ground_truth": "sealed/ground-truth.json",
+    "scenario_key": "sealed/scenario-key.json",
+    "operator_log": "sealed/operator-actions.jsonl"
+  },
+  "release_gate": [
+    "collection occurred after benchmark freeze",
+    "event IDs are unique and timestamps monotonic",
+    "labels and scenario names are absent from inference events",
+    "every ground-truth claim maps to event IDs",
+    "benign and malicious scenarios are both present",
+    "range image and collector versions are recorded"
+  ]
+}

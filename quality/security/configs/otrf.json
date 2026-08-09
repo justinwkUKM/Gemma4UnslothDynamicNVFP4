@@ -1,11 +1,13 @@
 {
   "dataset": "otrf",
   "track": "public",
+  "source_adapter": "quality.security.adapters.adapt_otrf",
+  "generic_prepare_input": "pre_adapted_canonical_jsonl_only",
   "field_map": {
     "event_id": "event_id",
     "timestamp": "timestamp",
     "source_type": "source_type",
-    "entity_id": "host",
+    "entity_id": "entity_id",
     "action": "action",
     "outcome": "outcome"
   },
