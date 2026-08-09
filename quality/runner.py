@@ -31,6 +31,8 @@ MODELS = {
     "gemma-4-E4B-it-NVFP4": "unsloth/gemma-4-E4B-it-NVFP4",
     "gemma-4-12b-it-NVFP4": "unsloth/gemma-4-12b-it-NVFP4",
     "gemma-4-26B-A4B-it-NVFP4": "unsloth/gemma-4-26B-A4B-it-NVFP4",
+    "qwen3.6-27B-NVFP4": "unsloth/Qwen3.6-27B-NVFP4",
+    "qwen3.6-35B-A3B-NVFP4": "unsloth/Qwen3.6-35B-A3B-NVFP4",
 }
 
 
@@ -255,7 +257,7 @@ def evaluate_prompt(
 
 
 def server_command(args: argparse.Namespace, checkpoint: str) -> list[str]:
-    return [
+    command = [
         args.vllm_command,
         "serve",
         checkpoint,
@@ -264,11 +266,13 @@ def server_command(args: argparse.Namespace, checkpoint: str) -> list[str]:
         "--served-model-name", checkpoint,
         "--max-model-len", "8192",
         "--gpu-memory-utilization", "0.90",
-        "--reasoning-parser", "gemma4",
         "--linear-backend", "auto",
         "--moe-backend", "flashinfer_cutlass",
         "--seed", str(args.seed),
     ]
+    if checkpoint.lower().startswith("unsloth/gemma"):
+        command[command.index("--linear-backend"):command.index("--linear-backend")] = ["--reasoning-parser", "gemma4"]
+    return command
 
 
 def record_model_failure(

@@ -18,6 +18,8 @@ MODELS = [
     ("gemma-4-E4B-it-NVFP4", "unsloth/gemma-4-E4B-it-NVFP4"),
     ("gemma-4-12b-it-NVFP4", "unsloth/gemma-4-12b-it-NVFP4"),
     ("gemma-4-26B-A4B-it-NVFP4", "unsloth/gemma-4-26B-A4B-it-NVFP4"),
+    ("qwen3.6-27B-NVFP4", "unsloth/Qwen3.6-27B-NVFP4"),
+    ("qwen3.6-35B-A3B-NVFP4", "unsloth/Qwen3.6-35B-A3B-NVFP4"),
 ]
 requested_models = {x.strip() for x in os.environ.get("GEMMA_MODEL_IDS", "").split(",") if x.strip()}
 if requested_models:
@@ -135,8 +137,10 @@ for model_id, checkpoint in MODELS:
     model_dir=ROOT/"results"/model_id; model_dir.mkdir(parents=True,exist_ok=True)
     log=ROOT/"logs"/(model_id+".server.log"); gpu=ROOT/"logs"/(model_id+".gpu.csv")
     cmd=[str(VLLM),"serve",checkpoint,"--host","127.0.0.1","--port","8000","--served-model-name",checkpoint,
-         "--max-model-len","8192","--gpu-memory-utilization","0.90","--reasoning-parser","gemma4",
+         "--max-model-len","8192","--gpu-memory-utilization","0.90",
          "--linear-backend","auto","--moe-backend","flashinfer_cutlass","--seed","0"]
+    if checkpoint.lower().startswith("unsloth/gemma"):
+        cmd[cmd.index("--linear-backend"):cmd.index("--linear-backend")] = ["--reasoning-parser", "gemma4"]
     log.parent.mkdir(parents=True,exist_ok=True); lf=log.open("w")
     proc=subprocess.Popen(cmd,stdout=lf,stderr=subprocess.STDOUT,start_new_session=True,env=RUNTIME_ENV)
     stop=__import__('threading').Event(); th=__import__('threading').Thread(target=gpu_sample,args=(gpu,stop),daemon=True); th.start()
