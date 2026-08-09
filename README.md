@@ -65,6 +65,22 @@ throughput: E4B, 26B A4B, then 12B. The first repetition can have higher TTFT
 because of one-time compilation and startup effects, which is why the report
 uses medians.
 
+### Qwen3.6 follow-up (partial)
+
+The separate 2026-08-09 Qwen run completed Qwen3.6-27B-NVFP4 with three
+repetitions per workload and zero request failures. It used a stable
+4,096-token/16-sequence configuration after the default 8K profile exceeded
+available KV-cache memory on the RTX 5090.
+
+| Model | Workload | Output tok/s | TTFT | TPOT | Requests |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Qwen3.6 27B | Interactive | 62.9 | 121 ms | 16.23 ms | 10/10 |
+| Qwen3.6 27B | Throughput | 761.8 | 474 ms | 18.10 ms | 100/100 |
+
+The Qwen3.6-35B-A3B-NVFP4 run is marked partial: its FP8/NVFP4 MoE
+quantization is not accepted by the available vLLM FlashInfer CUTLASS backend,
+and Triton does not support NVFP4 MoE. No 35B score is reported.
+
 The quality campaign has its own report at
 [`quality/summary/quality-report.md`](quality/summary/quality-report.md). It uses
 the exact prompts listed in [`quality/prompts.md`](quality/prompts.md), fixed
@@ -91,13 +107,12 @@ quality score.
 
 ## Future evaluation plans
 
-The next planned model evaluations are the [Unsloth Qwen3.6-27B-NVFP4
+The Qwen3.6 follow-up is now partially complete. The next planned model evaluations are the [Unsloth Qwen3.6-27B-NVFP4
 checkpoint](https://huggingface.co/unsloth/Qwen3.6-27B-NVFP4) and [Unsloth
 Qwen3.6-35B-A3B-NVFP4](https://huggingface.co/unsloth/Qwen3.6-35B-A3B-NVFP4).
-We intend to run both the existing performance benchmark and the 100-prompt
-quality campaign under the same controlled settings, with separate reports so
-Qwen results can be compared against Gemma without mixing throughput and
-quality metrics.
+The 27B performance result is recorded above; the 35B checkpoint requires a
+future vLLM/backend combination that supports its quantization scheme before
+the quality campaign can run.
 
 The planned [Security LLM real-time reasoning benchmark](quality/SECURITY_LLM_REASONING_BENCHMARK_PLAN.md)
 will extend this work to OTRF, LANL, and DARPA OpTC telemetry, measuring
